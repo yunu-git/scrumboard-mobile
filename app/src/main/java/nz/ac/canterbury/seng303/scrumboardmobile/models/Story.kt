@@ -1,11 +1,15 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.models
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 
 @Entity
 data class Story (
-    @PrimaryKey val uid: Int,
-    @ColumnInfo(name = "Title") val title: String
+    @PrimaryKey(autoGenerate = true) val storyId: Int,
+    val title: String,
+    val description: String,
+    val timeCreated: Long,
+    val status: ScrumboardConstants.Status
 )
+
