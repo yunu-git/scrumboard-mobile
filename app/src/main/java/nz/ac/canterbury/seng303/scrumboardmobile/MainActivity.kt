@@ -35,19 +35,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.Lab1Theme
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.CreateNoteViewModel
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.EditNoteViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 class MainActivity : ComponentActivity() {
 
-//    private val noteViewModel: NoteViewModel by koinViewModel()
     private val userViewModel: UserViewModel by koinViewModel()
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        noteViewModel.loadDefaultNotesIfNoneExist()
 
         setContent {
             Lab1Theme {
@@ -70,8 +66,6 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     Box(modifier = Modifier.padding(it)) {
-                        val createNoteViewModel: CreateNoteViewModel = viewModel()
-                        val editNoteViewModel: EditNoteViewModel = viewModel()
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController, userViewModel = userViewModel)
@@ -79,40 +73,6 @@ class MainActivity : ComponentActivity() {
                             composable("AllUsers") {
                                 UserList(navController = navController, userViewModel = userViewModel)
                             }
-
-//                            composable(
-//                                "NoteCard/{noteId}",
-//                                arguments = listOf(navArgument("noteId") {
-//                                    type = NavType.StringType
-//                                })
-//                            ) { backStackEntry ->
-//                                val noteId = backStackEntry.arguments?.getString("noteId")
-//                                noteId?.let { noteIdParam: String -> NoteCard(noteIdParam, noteViewModel) }
-//                            }
-//                            composable("EditNote/{noteId}", arguments = listOf(navArgument("noteId") {
-//                                type = NavType.StringType
-//                            })
-//                            ) { backStackEntry ->
-//                                val noteId = backStackEntry.arguments?.getString("noteId")
-//                                noteId?.let { noteIdParam: String -> EditNote(noteIdParam, editNoteViewModel, noteViewModel, navController = navController) }
-//                            }
-//                            composable("NoteList") {
-//                                NoteList(navController, noteViewModel)
-//                            }
-//                            composable("NoteGrid") {
-//                                NoteGrid(navController, noteViewModel)
-//                            }
-//                            composable("CreateNote") {
-//                                CreateNote(navController = navController, title = createNoteViewModel.title,
-//                                    onTitleChange = {newTitle ->
-//                                            val title = newTitle.replace("badword", "*******")
-//                                            createNoteViewModel.updateTitle(title)
-//                                    },
-//                                    content = createNoteViewModel.content, onContentChange = {newContent -> createNoteViewModel.updateContent(newContent)},
-//                                    createNoteFn = {title, content -> noteViewModel.createNote(title, content)}
-//                                    )
-////                                CreateNoteStandAlone(navController = navController)
-//                            }
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng303.scrumboardmobile.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Story
 import nz.ac.canterbury.seng303.scrumboardmobile.models.StoryWithTasks
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
@@ -13,5 +14,5 @@ interface StoryDao {
     fun getAll(): List<Story>
     @Transaction
     @Query("SELECT * FROM Story WHERE storyId = :storyId")
-    suspend fun getStoryWithTasks(storyId: Int): StoryWithTasks?
+    fun getStoryWithTasks(storyId: Int): Flow<StoryWithTasks>
 }

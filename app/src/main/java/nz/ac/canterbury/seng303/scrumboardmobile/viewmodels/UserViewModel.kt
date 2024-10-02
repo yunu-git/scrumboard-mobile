@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.dao.UserDao
-import nz.ac.canterbury.seng303.scrumboardmobile.datastore.Database
-import nz.ac.canterbury.seng303.scrumboardmobile.models.Note
 import nz.ac.canterbury.seng303.scrumboardmobile.models.User
 
 class UserViewModel(
