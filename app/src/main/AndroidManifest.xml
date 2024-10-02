@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScrumBoard"
         tools:targetApi="31"
-        android:name=".MainApplication">
+        android:name="nz.ac.canterbury.seng303.scrumboardmobile.MainApplication">
         <activity
-            android:name=".MainActivity"
+            android:name="nz.ac.canterbury.seng303.scrumboardmobile.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ScrumBoard">

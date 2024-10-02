@@ -1,20 +1,42 @@
 package nz.ac.canterbury.seng303.scrumboardmobile
 
 import android.app.Application
-import kotlinx.coroutines.FlowPreview
-import nz.ac.canterbury.seng303.scrumboardmobile.datastore.dataAccessModule
+import androidx.room.Room
+import nz.ac.canterbury.seng303.scrumboardmobile.datastore.Database
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.GlobalContext.startKoin
+import org.koin.dsl.module
 
-class MainApplication: Application() {
+class MainApplication : Application() {
 
-    @OptIn(FlowPreview::class)
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
+            androidLogger()
             androidContext(this@MainApplication)
-            modules(dataAccessModule)
+            modules(appModule)
         }
     }
+}
+
+val appModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            Database::class.java,
+            "app_database"
+        ).build()
+    }
+
+    single { get<Database>().storyDao() }
+    single { get<Database>().taskDao() }
+    single { get<Database>().workLogDao() }
+    single { get<Database>().userDao() }
+
+    // ViewModels
+    viewModel { UserViewModel(get()) }
 }

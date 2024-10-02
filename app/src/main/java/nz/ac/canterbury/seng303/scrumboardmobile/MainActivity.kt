@@ -18,94 +18,99 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateNote
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.EditNote
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.NoteCard
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.NoteGrid
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.NoteList
-import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.Lab1Theme
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.CreateNoteViewModel
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.EditNoteViewModel
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.NoteViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.RegisterUserScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
+import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val noteViewModel: NoteViewModel by koinViewModel()
-
+    private val userViewModel: UserViewModel by koinViewModel()
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        noteViewModel.loadDefaultNotesIfNoneExist()
 
         setContent {
-            Lab1Theme {
+            ScrumBoardTheme {
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val appBarViewModel: AppBarViewModel = viewModel()
+                appBarViewModel.init()
                 Scaffold(
                     topBar = {
                         // Add your AppBar content here
                         TopAppBar(
-                            title = { Text("SENG303 Lab 2") },
+                            title = {
+                                navBackStackEntry?.destination?.route?.let { route ->
+                                    appBarViewModel.getNameById(route)?.run {
+                                        Text(this)
+                                    }
+                                }
+                            },
                             navigationIcon = {
-                                IconButton(onClick = { navController.popBackStack() }) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowBack,
-                                        contentDescription = "Back"
-                                    )
+                                if (navBackStackEntry?.destination?.route != "Home") {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
                                 }
                             }
                         )
+
                     }
                 ) {
 
                     Box(modifier = Modifier.padding(it)) {
-                        val createNoteViewModel: CreateNoteViewModel = viewModel()
-                        val editNoteViewModel: EditNoteViewModel = viewModel()
+                        val createUserViewModel: CreateUserViewModel = viewModel()
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController)
                             }
-                            composable(
-                                "NoteCard/{noteId}",
-                                arguments = listOf(navArgument("noteId") {
-                                    type = NavType.StringType
-                                })
-                            ) { backStackEntry ->
-                                val noteId = backStackEntry.arguments?.getString("noteId")
-                                noteId?.let { noteIdParam: String -> NoteCard(noteIdParam, noteViewModel) }
+                            composable("AllUsers") {
+                                UserList(navController = navController, userViewModel = userViewModel)
                             }
-                            composable("EditNote/{noteId}", arguments = listOf(navArgument("noteId") {
-                                type = NavType.StringType
-                            })
-                            ) { backStackEntry ->
-                                val noteId = backStackEntry.arguments?.getString("noteId")
-                                noteId?.let { noteIdParam: String -> EditNote(noteIdParam, editNoteViewModel, noteViewModel, navController = navController) }
-                            }
-                            composable("NoteList") {
-                                NoteList(navController, noteViewModel)
-                            }
-                            composable("NoteGrid") {
-                                NoteGrid(navController, noteViewModel)
-                            }
-                            composable("CreateNote") {
-                                CreateNote(navController = navController, title = createNoteViewModel.title,
-                                    onTitleChange = {newTitle ->
-                                            val title = newTitle.replace("badword", "*******")
-                                            createNoteViewModel.updateTitle(title)
+                            composable("Register") {
+                                RegisterUserScreen(
+                                    navController = navController,
+                                    username = createUserViewModel.username,
+                                    onUsernameChange = { newUsername ->
+                                        createUserViewModel.updateUsername(newUsername)
                                     },
-                                    content = createNoteViewModel.content, onContentChange = {newContent -> createNoteViewModel.updateContent(newContent)},
-                                    createNoteFn = {title, content -> noteViewModel.createNote(title, content)}
-                                    )
-//                                CreateNoteStandAlone(navController = navController)
+                                    password = createUserViewModel.password,
+                                    onPasswordChange = { newPassword ->
+                                        createUserViewModel.updatePassword(newPassword)
+                                    },
+                                    firstName = createUserViewModel.firstName,
+                                    onFirstNameChange = { newFirstName ->
+                                        createUserViewModel.updateFirstName(newFirstName)
+                                    },
+                                    lastName = createUserViewModel.lastName,
+                                    onLastNameChange = { newLastName ->
+                                        createUserViewModel.updateLastName(newLastName)
+                                    },
+                                    createUserFn = { username, password, firstName, lastName ->
+                                        userViewModel.createUser(
+                                            username,
+                                            password,
+                                            firstName,
+                                            lastName
+                                        )
+                                    }
+                                )
                             }
                         }
                     }
@@ -123,18 +128,12 @@ fun Home(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to Lab 2")
-        Button(onClick = { navController.navigate("CreateNote") }) {
-            Text("Create Note")
+        Text("Welcome to ScrumBoard")
+        Button(onClick = { navController.navigate("AllUsers") }) {
+            Text("View Users")
         }
-        Button(onClick = { navController.navigate("NoteCard/1") }) {
-            Text("Go to Note Card")
-        }
-        Button(onClick = { navController.navigate("NoteList") }) {
-            Text("Note List")
-        }
-        Button(onClick = { navController.navigate("NoteGrid") }) {
-            Text("Note Grid")
+        Button(onClick = { navController.navigate("Register") }) {
+            Text("Register")
         }
     }
 }
