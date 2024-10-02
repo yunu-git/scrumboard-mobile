@@ -10,6 +10,5 @@ data class Story (
     val title: String,
     val description: String,
     val timeCreated: Long,
-    val status: ScrumboardConstants.Status
 )
 

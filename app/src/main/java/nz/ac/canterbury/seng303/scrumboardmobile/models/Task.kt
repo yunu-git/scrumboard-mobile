@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng303.scrumboardmobile.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity
 data class Task(
@@ -15,6 +14,6 @@ data class Task(
     val status: ScrumboardConstants.Status,
     val estimate: Int,
     val priority: ScrumboardConstants.Priority,
-    val reviewer: String
+    val reviewerId: Int
 ) {
 }
