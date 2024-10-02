@@ -9,7 +9,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.models.User
 @Dao
 interface UserDao {
     @Insert(entity = User::class)
-    fun insertUser(vararg user: User)
+    suspend fun insertUser(vararg user: User)
     @Query("SELECT * FROM User")
     fun getAllUsers(): Flow<List<User>>
 }

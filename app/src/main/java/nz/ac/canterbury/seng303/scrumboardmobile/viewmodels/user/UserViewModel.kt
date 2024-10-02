@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng303.scrumboardmobile.viewmodels
+package nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -16,7 +16,7 @@ class UserViewModel(
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> get() = _users
     fun getUsers() = viewModelScope.launch {
-        userDao.getAllUsers().catch { Log.e("NOTE_VIEW_MODEL", it.toString()) }
+        userDao.getAllUsers().catch { Log.e("USER_VIEW_MODEL", it.toString()) }
             .collect { _users.emit(it) }
     }
 
@@ -32,9 +32,9 @@ class UserViewModel(
         )
         try {
             val userId = userDao.insertUser(user)
-            Log.d("STORY_VIEW_MODEL", "User inserted with id: $userId")
+            Log.d("USER_VIEW_MODEL", "User inserted with id: $userId")
         } catch (e: Exception) {
-            Log.e("STORY_VIEW_MODEL", "Could not insert User", e)
+            Log.e("USER_VIEW_MODEL", "Could not insert User", e)
         }
     }
     

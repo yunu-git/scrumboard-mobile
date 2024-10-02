@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng303.scrumboardmobile
 import android.app.Application
 import androidx.room.Room
 import nz.ac.canterbury.seng303.scrumboardmobile.datastore.Database
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.UserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel

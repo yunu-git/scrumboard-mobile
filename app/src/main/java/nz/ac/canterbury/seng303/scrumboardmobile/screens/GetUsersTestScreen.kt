@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.scrumboardmobile.models.User
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.UserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @Composable
 fun UserList(navController: NavController, userViewModel: UserViewModel) {
