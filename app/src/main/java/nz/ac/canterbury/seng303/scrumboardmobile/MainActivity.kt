@@ -150,6 +150,7 @@ class MainActivity : ComponentActivity() {
                             composable("Story/{storyId}", arguments = listOf(navArgument("storyId") {
                                 type = NavType.StringType
                             })) { backStackEntry ->
+                                val items = listOf("Card 1 Content", "Card 2 Content", "Card 3 Content")
                                 val storyId = backStackEntry.arguments?.getString("storyId")
                                 storyId?.let { storyIdParam: String ->
                                     ViewStoryScreen(navController = navController, storyId = storyIdParam, storyViewModel = storyViewModel)
