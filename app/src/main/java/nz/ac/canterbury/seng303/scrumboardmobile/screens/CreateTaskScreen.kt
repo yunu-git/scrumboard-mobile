@@ -94,7 +94,7 @@ fun CreateTaskScreen (
                         .clickable { expandedPriority = true },
                     trailingIcon = {
                         IconButton(onClick = { expandedPriority = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Priority")
+                            Icon(Icons.Default.MoreVert, contentDescription = "Task Priority")
                         }
                     }
                 )
@@ -120,9 +120,11 @@ fun CreateTaskScreen (
             }
 
             // Complexity selection dropdown
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
                 OutlinedTextField(
                     value = selectedComplexity.name,
                     onValueChange = {},
@@ -130,17 +132,25 @@ fun CreateTaskScreen (
                     label = { Text("Task Complexity") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { expandedComplexity = true }
+                        .clickable { expandedComplexity = true },
+                    trailingIcon = {
+                        IconButton(onClick = { expandedComplexity = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Task Complexity")
+                        }
+                    }
                 )
-                IconButton(onClick = { expandedComplexity = true }) {
-                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Complexity")
-                }
-                DropdownMenu(expanded = expandedComplexity, onDismissRequest = { expandedComplexity = false }) {
+
+                DropdownMenu(
+                    expanded = expandedComplexity,
+                    onDismissRequest = { expandedComplexity = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     // Iterate through the enum values to create dropdown items
                     ScrumboardConstants.Complexity.entries.forEach { complexity ->
-                        DropdownMenuItem(text = {
-                            Text(text = complexity.name)
-                        },
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = complexity.name)
+                            },
                             onClick = {
                                 onComplexityChange(complexity)
                                 expandedComplexity = false
