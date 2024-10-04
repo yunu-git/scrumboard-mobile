@@ -19,7 +19,7 @@ interface ScrumboardConstants {
         LOW,
         NORMAL,
         HIGH,
-        CRITICAL
+        CRITICAL,
+        UNSET
     }
-
 }
