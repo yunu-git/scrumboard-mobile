@@ -92,7 +92,7 @@ fun CreateTaskScreen (
                     .padding(vertical = 8.dp)
             ) {
                 OutlinedTextField(
-                    value = selectedPriority.name,
+                    value = selectedPriority.priority,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Task Priority") },
@@ -115,7 +115,7 @@ fun CreateTaskScreen (
                     ScrumboardConstants.Priority.entries.forEach { priority ->
                         DropdownMenuItem(
                             text = {
-                                Text(text = priority.name)
+                                Text(text = priority.priority)
                             },
                             onClick = {
                                 onPriorityChange(priority)
@@ -133,7 +133,7 @@ fun CreateTaskScreen (
                     .padding(vertical = 8.dp)
             ) {
                 OutlinedTextField(
-                    value = selectedComplexity.name,
+                    value = selectedComplexity.complexity,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Task Complexity") },
@@ -156,7 +156,7 @@ fun CreateTaskScreen (
                     ScrumboardConstants.Complexity.entries.forEach { complexity ->
                         DropdownMenuItem(
                             text = {
-                                Text(text = complexity.name)
+                                Text(text = complexity.complexity)
                             },
                             onClick = {
                                 onComplexityChange(complexity)
