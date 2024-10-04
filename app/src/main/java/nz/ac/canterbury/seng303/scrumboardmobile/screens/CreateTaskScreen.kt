@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -78,9 +79,11 @@ fun CreateTaskScreen (
             )
 
             // Priority selection dropdown
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
                 OutlinedTextField(
                     value = selectedPriority.name,
                     onValueChange = {},
@@ -88,18 +91,21 @@ fun CreateTaskScreen (
                     label = { Text("Task Priority") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { expandedPriority = true }
+                        .clickable { expandedPriority = true },
+                    trailingIcon = {
+                        IconButton(onClick = { expandedPriority = true }) {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Priority")
+                        }
+                    }
                 )
 
-                DropdownMenu(
-                    expanded = expandedPriority,
-                    onDismissRequest = { expandedPriority = false }
-                ) {
+                DropdownMenu(expanded = expandedPriority, onDismissRequest = { expandedPriority = false }) {
                     // Iterate through the enum values to create dropdown items
                     ScrumboardConstants.Priority.entries.forEach { priority ->
-                        DropdownMenuItem(text = {
-                            Text(text = priority.name)
-                        },
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = priority.name)
+                            },
                             onClick = {
                                 onPriorityChange(priority)
                                 expandedPriority = false
@@ -113,8 +119,17 @@ fun CreateTaskScreen (
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)) {
+                OutlinedTextField(
+                    value = selectedComplexity.name,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Task Complexity") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { expandedComplexity = true }
+                )
                 IconButton(onClick = { expandedComplexity = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Task Complexity")
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Complexity")
                 }
                 DropdownMenu(expanded = expandedComplexity, onDismissRequest = { expandedComplexity = false }) {
                     // Iterate through the enum values to create dropdown items
