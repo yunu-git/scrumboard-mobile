@@ -6,13 +6,19 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.dao.StoryDao
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Story
+import nz.ac.canterbury.seng303.scrumboardmobile.models.StoryWithTasks
 
 class StoryViewModel (private val storyDao: StoryDao): ViewModel() {
     private val _stories = MutableStateFlow<List<Story>>(emptyList())
     val stories: StateFlow<List<Story>> get() = _stories
+
+    private val _selectedStoryWithTasks = MutableStateFlow<StoryWithTasks?>(null)
+    val selectedStoryWithTasks: StateFlow<StoryWithTasks?> = _selectedStoryWithTasks
+
     fun getStories() = viewModelScope.launch {
         storyDao.getAllStories().catch { Log.e("STORY_VIEW_MODEL", it.toString()) }
             .collect { _stories.emit(it) }
@@ -33,5 +39,14 @@ class StoryViewModel (private val storyDao: StoryDao): ViewModel() {
             Log.e("STORY_VIEW_MODEL", "Could not insert Story", e)
         }
     }
+
+    fun getStoryWithTasks(storyId: Int?) = viewModelScope.launch {
+        if (storyId != null) {
+            _selectedStoryWithTasks.value = storyDao.getStoryWithTasks(storyId).first()
+        } else {
+            _selectedStoryWithTasks.value = null
+        }
+    }
+
 }
 

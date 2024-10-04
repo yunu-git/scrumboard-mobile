@@ -23,14 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.RegisterUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewAllStories
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
@@ -144,8 +147,23 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+                            composable("Story/{storyId}", arguments = listOf(navArgument("storyId") {
+                                type = NavType.StringType
+                            })) { backStackEntry ->
+                                val storyId = backStackEntry.arguments?.getString("storyId")
+                                storyId?.let { storyIdParam: String ->
+                                    ViewStoryScreen(navController = navController, storyId = storyIdParam, storyViewModel = storyViewModel)
+                                }
 
+                            }
 
+                            composable("Story/{storyId}/CreateTask", arguments = listOf(navArgument("storyId") {
+
+                            })) { backStackEntry ->
+                                val storyId = backStackEntry.arguments?.getString("storyId")
+                                storyId?.let { storyIdParam: String ->
+                                }
+                            }
                         }
                     }
                 }
