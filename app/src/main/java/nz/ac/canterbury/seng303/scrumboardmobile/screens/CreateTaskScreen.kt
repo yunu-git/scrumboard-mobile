@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
@@ -52,6 +54,7 @@ fun CreateTaskScreen (
     var expandedPriority by remember { mutableStateOf(false) }
     var expandedComplexity by remember { mutableStateOf(false) }
     var integerValue by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -184,12 +187,34 @@ fun CreateTaskScreen (
 
             Button(
                 onClick = {
-                    createTaskFn(title, description, estimate, selectedPriority, selectedComplexity)
-                    onTitleChange("")
-                    onDescriptionChange("")
-                    onPriorityChange(ScrumboardConstants.Priority.UNSET)
-                    onComplexityChange(ScrumboardConstants.Complexity.UNSET)
-                    navController.navigate("AllStories")
+                    when {
+                        title.trim().isEmpty() -> {
+                            Toast.makeText(context, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                        }
+                        description.trim().isEmpty() -> {
+                            Toast.makeText(context, "Description cannot be unset", Toast.LENGTH_SHORT).show()
+                        }
+                        selectedPriority == ScrumboardConstants.Priority.UNSET -> {
+                            Toast.makeText(context, "Priority cannot be unset", Toast.LENGTH_SHORT).show()
+                        }
+                        selectedComplexity == ScrumboardConstants.Complexity.UNSET -> {
+                            Toast.makeText(context, "Complexity cannot be unset", Toast.LENGTH_SHORT).show()
+                        }
+                        integerValue == "" -> {
+                            Toast.makeText(context, "Estimate cannot be empty", Toast.LENGTH_SHORT).show()
+                        }
+                        estimate <= 0 -> {
+                            Toast.makeText(context, "Estimate must be a positive integer", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            createTaskFn(title, description, estimate, selectedPriority, selectedComplexity)
+                            onTitleChange("")
+                            onDescriptionChange("")
+                            onPriorityChange(ScrumboardConstants.Priority.UNSET)
+                            onComplexityChange(ScrumboardConstants.Complexity.UNSET)
+                            navController.navigate("AllStories")
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
