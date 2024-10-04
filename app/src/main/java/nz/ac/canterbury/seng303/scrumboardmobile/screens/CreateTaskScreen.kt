@@ -99,7 +99,11 @@ fun CreateTaskScreen (
                     }
                 )
 
-                DropdownMenu(expanded = expandedPriority, onDismissRequest = { expandedPriority = false }) {
+                DropdownMenu(
+                    expanded = expandedPriority,
+                    onDismissRequest = { expandedPriority = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     // Iterate through the enum values to create dropdown items
                     ScrumboardConstants.Priority.entries.forEach { priority ->
                         DropdownMenuItem(
