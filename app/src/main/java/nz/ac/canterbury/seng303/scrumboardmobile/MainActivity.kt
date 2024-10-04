@@ -30,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateStoryScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.RegisterUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewAllStories
@@ -38,6 +39,8 @@ import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.CreateTaskViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
@@ -46,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     private val userViewModel: UserViewModel by koinViewModel()
     private val storyViewModel: StoryViewModel by koinViewModel()
+    private val taskViewModel: TaskViewModel by koinViewModel()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +90,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(it)) {
                         val createUserViewModel: CreateUserViewModel = viewModel()
                         val createStoryViewModel: CreateStoryViewModel = viewModel()
+                        val createTaskViewModel: CreateTaskViewModel = viewModel()
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController)
@@ -147,6 +152,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+
                             composable("Story/{storyId}", arguments = listOf(navArgument("storyId") {
                                 type = NavType.StringType
                             })) { backStackEntry ->
@@ -157,11 +163,46 @@ class MainActivity : ComponentActivity() {
 
                             }
 
-                            composable("Story/{storyId}/CreateTask", arguments = listOf(navArgument("storyId") {
-
-                            })) { backStackEntry ->
+                            composable(
+                                route = "Story/{storyId}/CreateTask",
+                                arguments = listOf(navArgument("storyId") { type = NavType.StringType })
+                            ) { backStackEntry ->
                                 val storyId = backStackEntry.arguments?.getString("storyId")
+
                                 storyId?.let { storyIdParam: String ->
+                                    CreateTaskScreen(
+                                        navController = navController,
+                                        title = createTaskViewModel.title,
+                                        onTitleChange = { newTitle ->
+                                            createTaskViewModel.updateTitle(newTitle)
+                                        },
+                                        description = createTaskViewModel.description,
+                                        onDescriptionChange = { newDescription ->
+                                            createTaskViewModel.updateDescription(newDescription)
+                                        },
+                                        estimate = createTaskViewModel.estimate,
+                                        onEstimateChange = { newEstimate ->
+                                            createTaskViewModel.updateEstimate(newEstimate)
+                                        },
+                                        selectedPriority = createTaskViewModel.priority,
+                                        onPriorityChange = { newPriority ->
+                                            createTaskViewModel.updatePriority(newPriority)
+                                        },
+                                        selectedComplexity = createTaskViewModel.complexity,
+                                        onComplexityChange = { newComplexity ->
+                                            createTaskViewModel.updateComplexity(newComplexity)
+                                        },
+                                        createTaskFn = { title, description, estimate, selectedPriority, selectedComplexity ->
+                                            taskViewModel.createTask(
+                                                title,
+                                                description,
+                                                selectedComplexity,
+                                                selectedPriority,
+                                                estimate,
+                                                storyIdParam.toInt()
+                                            )
+                                        }
+                                    )
                                 }
                             }
                         }

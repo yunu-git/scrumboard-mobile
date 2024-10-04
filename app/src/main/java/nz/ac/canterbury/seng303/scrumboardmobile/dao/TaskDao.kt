@@ -20,4 +20,6 @@ interface TaskDao {
     @Transaction
     @Query("SELECT * FROM Task WHERE taskId = :taskId")
     fun getTaskWithWorkLogs(taskId: Int): Flow<TaskWithWorkLogs>
+    @Query("SELECT * FROM Task")
+    fun getAllTasks(): Flow<List<Task>>
 }
