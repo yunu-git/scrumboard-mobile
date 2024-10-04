@@ -50,65 +50,60 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel) {
     storyViewModel.getStories()
     val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        if (storiesWithTasks.isNotEmpty()) {
-            Scaffold(
-                floatingActionButton = {
-                    ExtendedCreateStoryFab(navController = navController)
-                }
-            ) { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                ) {
-                    LazyColumn {
-                        items(storiesWithTasks) { story ->
-                            StoryCard(navController = navController, storyWithTasks = story)
-                        }
-                    }
-
-                }
+    if (storiesWithTasks.isNotEmpty()) {
+        Scaffold(
+            floatingActionButton = {
+                ExtendedCreateStoryFab(navController = navController)
             }
-        } else {
+        ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "No stories available.",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(
-                        modifier = Modifier.height(8.dp)
-                    )
-                    Text(
-                        text = "You can create some here.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(
-                        modifier = Modifier.height(8.dp)
-                    )
-                    Button(
-                        onClick = {navController.navigate("CreateStory")}
-                    ) {
-                        Text(text = "Create a Story")
+                LazyColumn {
+                    items(storiesWithTasks) { story ->
+                        StoryCard(navController = navController, storyWithTasks = story)
                     }
+                }
+
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "No stories available.",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+                Text(
+                    text = "You can create some here.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+                Button(
+                    onClick = {navController.navigate("CreateStory")}
+                ) {
+                    Text(text = "Create a Story")
                 }
             }
         }
     }
-
 }
+
 
 @Composable
 fun StoryCard(
