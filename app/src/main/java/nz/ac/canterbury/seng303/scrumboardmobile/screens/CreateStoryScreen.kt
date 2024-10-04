@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,13 +30,13 @@ fun CreateStoryScreen (
     createStoryFn: (String, String, Long) -> Unit
 ) {
 
-        val timeCreated = remember { mutableStateOf(0L) }
+        val timeCreated = remember { mutableLongStateOf(0L) }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Create Story in your project")
+            Text("Create a Story")
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -51,7 +52,7 @@ fun CreateStoryScreen (
                 OutlinedTextField(
                     value = description,
                     onValueChange = { onDescriptionChange(it) },
-                    label = { Text("Description") },
+                    label = { Text("Story Description") },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
                 )
 
@@ -65,7 +66,7 @@ fun CreateStoryScreen (
                     },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
                 ) {
-                    Text("Create a story")
+                    Text("Create")
                 }
             }
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -44,44 +45,30 @@ fun ViewStoryScreen(
     navController: NavController,
     storyViewModel: StoryViewModel,
 ) {
+    storyViewModel.getStoryWithTasks(storyId = storyId.toIntOrNull())
     val selectedStoryState by storyViewModel.selectedStoryWithTasks.collectAsState(null)
     val storyWithTasks: StoryWithTasks? = selectedStoryState
 
-    val context = LocalContext.current
-    storyViewModel.getStoryWithTasks(storyId = storyId.toIntOrNull())
-    var fabStateExpanded by rememberSaveable {
-        mutableStateOf(false)
-    }
-    LaunchedEffect(storyId) {
-        storyViewModel.getStoryWithTasks(storyId = storyId.toIntOrNull())
-    }
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("Story/$storyId/CreateTask") }
+    if (storyWithTasks != null) {
+        Scaffold(
+            floatingActionButton = {
+                ExtendedCreateTaskFab(navController = navController, storyId = storyId)
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Task",
-                )
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            storyWithTasks?.let { story ->
-                Text("Story Title: ${story.story.title}")
-                Text("Description: ${story.story.description}")
-            }
+                storyWithTasks.let { story ->
+                    Text("Story Title: ${story.story.title}")
+                    Text("Description: ${story.story.description}")
+                }
 
             ScrollableStatusCards(storyWithTasks)
         }
     }
 }
-
 @Composable
 fun ScrollableStatusCards(storyWithTasks: StoryWithTasks?) {
     val listState = rememberLazyListState()
@@ -150,4 +137,12 @@ fun ScrollableStatusCards(storyWithTasks: StoryWithTasks?) {
                 currentStatusIndex = index
             }
     }
+}
+@Composable
+fun ExtendedCreateTaskFab(navController: NavController, storyId: String) {
+    ExtendedFloatingActionButton(
+        onClick = { navController.navigate("Story/$storyId/CreateTask") },
+        text = { Text(text = "Add Task") },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task") }
+    )
 }

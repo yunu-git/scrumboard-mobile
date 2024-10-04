@@ -40,8 +40,8 @@ class StoryViewModel (private val storyDao: StoryDao): ViewModel() {
     }
 
     fun getStories() = viewModelScope.launch {
-        storyDao.getAllStories().catch { Log.e("STORY_VIEW_MODEL", it.toString()) }
-            .collect { _stories.emit(it) }
+        storyDao.getAllStoriesWithTasks().catch { Log.e("STORY_VIEW_MODEL", it.toString()) }
+            .collect {_storiesWithTasks.emit(it) }
     }
 
     fun createStory(title: String,
