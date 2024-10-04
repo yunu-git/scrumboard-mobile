@@ -34,11 +34,11 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 
 @Composable
 fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel) {
-    storyViewModel.getStories()
-    val stories: List<Story> by storyViewModel.stories.collectAsState(emptyList())
+    storyViewModel.getStoriesWithTasks()
+    val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
     LazyColumn {
-        items(stories) { story ->
-            StoryCard(navController = navController, storyViewModel = storyViewModel, storyId = story.storyId)
+        items(storiesWithTasks) { story ->
+            StoryCard(navController = navController, storyWithTasks = story)
         }
     }
 }
@@ -46,12 +46,9 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
 @Composable
 fun StoryCard(
     navController: NavController,
-    storyViewModel: StoryViewModel,
-    storyId: Int
+    storyWithTasks: StoryWithTasks?
 ) {
-    storyViewModel.getStoryWithTasks(storyId = storyId)
-    val selectedStoryState by storyViewModel.selectedStoryWithTasks.collectAsState(null)
-    val storyWithTasks: StoryWithTasks? = selectedStoryState
+
     val context = LocalContext.current
     if (storyWithTasks != null) {
         ElevatedCard(
@@ -59,7 +56,7 @@ fun StoryCard(
                 .fillMaxWidth()
                 .padding(8.dp)
                 .clickable {
-                    navController.navigate("Story/${storyId}")
+                    navController.navigate("Story/${storyWithTasks.story.storyId}")
                 },
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
