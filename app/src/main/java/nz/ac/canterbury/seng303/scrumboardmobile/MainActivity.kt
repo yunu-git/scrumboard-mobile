@@ -180,6 +180,10 @@ class MainActivity : ComponentActivity() {
                                         onDescriptionChange = { newDescription ->
                                             createTaskViewModel.updateDescription(newDescription)
                                         },
+                                        estimate = createTaskViewModel.estimate,
+                                        onEstimateChange = { newEstimate ->
+                                            createTaskViewModel.updateEstimate(newEstimate)
+                                        },
                                         selectedPriority = createTaskViewModel.priority,
                                         onPriorityChange = { newPriority ->
                                             createTaskViewModel.updatePriority(newPriority)
@@ -188,13 +192,13 @@ class MainActivity : ComponentActivity() {
                                         onComplexityChange = { newComplexity ->
                                             createTaskViewModel.updateComplexity(newComplexity)
                                         },
-                                        createTaskFn = { title, description, selectedPriority, selectedComplexity ->
+                                        createTaskFn = { title, description, estimate, selectedPriority, selectedComplexity ->
                                             taskViewModel.createTask(
                                                 title,
                                                 description,
                                                 selectedComplexity,
                                                 selectedPriority,
-                                                0
+                                                estimate
                                             )
                                         }
                                     )

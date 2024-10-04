@@ -38,13 +38,16 @@ fun CreateTaskScreen (
     description: String,
     onDescriptionChange: (String) -> Unit,
 
+    estimate: Int,
+    onEstimateChange: (Int) -> Unit,
+
     selectedPriority: ScrumboardConstants.Priority,
     onPriorityChange: (ScrumboardConstants.Priority) -> Unit,
 
     selectedComplexity: ScrumboardConstants.Complexity,
     onComplexityChange: (ScrumboardConstants.Complexity) -> Unit,
 
-    createTaskFn: (String, String, ScrumboardConstants.Priority, ScrumboardConstants.Complexity) -> Unit
+    createTaskFn: (String, String, Int, ScrumboardConstants.Priority, ScrumboardConstants.Complexity) -> Unit
 ) {
     var expandedPriority by remember { mutableStateOf(false) }
     var expandedComplexity by remember { mutableStateOf(false) }
@@ -160,18 +163,34 @@ fun CreateTaskScreen (
                 }
             }
 
+            // Estimate
+            OutlinedTextField(
+                value = estimate.toString(),
+                onValueChange = {
+                    if (it.all { char -> char.isDigit() }) {
+                        onEstimateChange(it.toInt())
+                    }
+                },
+                label = { Text("Task Estimate") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
+
             Button(
                 onClick = {
-                    createTaskFn(title, description, selectedPriority, selectedComplexity)
+                    createTaskFn(title, description, estimate, selectedPriority, selectedComplexity)
                     onTitleChange("")
                     onDescriptionChange("")
+                    onPriorityChange(ScrumboardConstants.Priority.UNSET)
+                    onComplexityChange(ScrumboardConstants.Complexity.UNSET)
                     navController.navigate("AllStories")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
-                Text("Create a task")
+                Text("Create Task")
             }
         }
     }
