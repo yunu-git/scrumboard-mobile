@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -30,24 +31,14 @@ fun ViewStoryScreen(
     navController: NavController,
     storyViewModel: StoryViewModel,
 ) {
-    val context = LocalContext.current
     storyViewModel.getStoryWithTasks(storyId = storyId.toIntOrNull())
     val selectedStoryState by storyViewModel.selectedStoryWithTasks.collectAsState(null)
     val storyWithTasks: StoryWithTasks? = selectedStoryState
-    var fabStateExpanded by rememberSaveable {
-        mutableStateOf(false)
-    }
+
     if (storyWithTasks != null) {
         Scaffold(
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate("Story/$storyId/CreateTask") }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Task",
-                    )
-                }
+                ExtendedCreateTaskFab(navController = navController, storyId = storyId)
             }
         ) { innerPadding ->
             Box(
@@ -60,4 +51,13 @@ fun ViewStoryScreen(
             }
         }
     }
+}
+
+@Composable
+fun ExtendedCreateTaskFab(navController: NavController, storyId: String) {
+    ExtendedFloatingActionButton(
+        onClick = { navController.navigate("Story/$storyId/CreateTask") },
+        text = { Text(text = "Add Task") },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task") }
+    )
 }

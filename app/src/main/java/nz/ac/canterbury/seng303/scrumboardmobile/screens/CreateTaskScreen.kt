@@ -61,7 +61,7 @@ fun CreateTaskScreen (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Create a Task for your story")
+        Text("Create a Task for your Story")
         Column(
             modifier = Modifier
                 .padding(16.dp)
