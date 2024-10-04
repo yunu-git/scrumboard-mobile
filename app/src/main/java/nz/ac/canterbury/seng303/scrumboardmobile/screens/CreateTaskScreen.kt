@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -109,20 +113,10 @@ fun CreateTaskScreen (
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)) {
-                OutlinedTextField(
-                    value = selectedComplexity.name,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Task Complexity") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { expandedComplexity = true }
-                )
-
-                DropdownMenu(
-                    expanded = expandedComplexity,
-                    onDismissRequest = { expandedComplexity = false }
-                ) {
+                IconButton(onClick = { expandedComplexity = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "Task Complexity")
+                }
+                DropdownMenu(expanded = expandedComplexity, onDismissRequest = { expandedComplexity = false }) {
                     // Iterate through the enum values to create dropdown items
                     ScrumboardConstants.Complexity.entries.forEach { complexity ->
                         DropdownMenuItem(text = {
