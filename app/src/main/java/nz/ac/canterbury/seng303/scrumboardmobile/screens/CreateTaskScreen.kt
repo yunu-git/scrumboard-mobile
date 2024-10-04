@@ -51,6 +51,7 @@ fun CreateTaskScreen (
 ) {
     var expandedPriority by remember { mutableStateOf(false) }
     var expandedComplexity by remember { mutableStateOf(false) }
+    var integerValue by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -165,9 +166,13 @@ fun CreateTaskScreen (
 
             // Estimate
             OutlinedTextField(
-                value = estimate.toString(),
+                value = integerValue,
                 onValueChange = {
-                    if (it.all { char -> char.isDigit() }) {
+                    if (it.all { char -> char.isDigit() } || it.isEmpty()) {
+                        integerValue = it
+                    }
+
+                    if (it.all { char -> char.isDigit()} && it != "") {
                         onEstimateChange(it.toInt())
                     }
                 },
