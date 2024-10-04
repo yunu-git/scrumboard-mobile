@@ -23,7 +23,8 @@ class TaskViewModel (private val taskDao: TaskDao): ViewModel() {
                     description: String,
                     complexity: ScrumboardConstants.Complexity,
                    priority: ScrumboardConstants.Priority,
-                   estimate: Int
+                   estimate: Int,
+                   storyId: Int
                    ) = viewModelScope.launch {
         val task = Task(
             title = title,
@@ -33,7 +34,7 @@ class TaskViewModel (private val taskDao: TaskDao): ViewModel() {
             estimate = estimate,
             status = ScrumboardConstants.Status.TO_DO,
             assignedTo = null,
-            storyId = 1,
+            storyId = storyId,
             reviewerId = null
         )
         try {

@@ -198,7 +198,8 @@ class MainActivity : ComponentActivity() {
                                                 description,
                                                 selectedComplexity,
                                                 selectedPriority,
-                                                estimate
+                                                estimate,
+                                                storyIdParam.toInt()
                                             )
                                         }
                                     )
