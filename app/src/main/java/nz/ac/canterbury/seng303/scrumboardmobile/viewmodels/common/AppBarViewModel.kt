@@ -12,7 +12,8 @@ class AppBarViewModel: ViewModel() {
     fun init() {
         idNameMap["Home"] = "ScrumBoard Mobile"
         idNameMap["AllUsers"] = "All Users"
-
+        idNameMap["CreateStory"] = "Create a Story"
+        idNameMap["AllStories"] = "Stories"
         idNameMap["Register"] = "Register"
     }
 }
