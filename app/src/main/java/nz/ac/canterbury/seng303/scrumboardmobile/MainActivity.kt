@@ -27,10 +27,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.RegisterUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewAllStories
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
@@ -38,6 +42,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 class MainActivity : ComponentActivity() {
 
     private val userViewModel: UserViewModel by koinViewModel()
+    private val storyViewModel: StoryViewModel by koinViewModel()
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +82,7 @@ class MainActivity : ComponentActivity() {
 
                     Box(modifier = Modifier.padding(it)) {
                         val createUserViewModel: CreateUserViewModel = viewModel()
+                        val createStoryViewModel: CreateStoryViewModel = viewModel()
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController)
@@ -112,6 +119,33 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+
+                            composable("AllStories") {
+                                ViewAllStories(navController = navController, storyViewModel = storyViewModel)
+                            }
+
+                            composable("CreateStory") {
+                                CreateStoryScreen(
+                                    navController = navController,
+                                    title = createStoryViewModel.title,
+                                    onTitleChange = { newTitle ->
+                                        createStoryViewModel.updateTitle(newTitle)
+                                    },
+                                    description = createStoryViewModel.description,
+                                    onDescriptionChange = { newDescription ->
+                                        createStoryViewModel.updateDescription(newDescription)
+                                    },
+                                    createStoryFn = { title, description,timeCreated  ->
+                                        storyViewModel.createStory(
+                                            title,
+                                            description,
+                                            timeCreated
+                                        )
+                                    }
+                                )
+                            }
+
+
                         }
                     }
                 }
@@ -134,6 +168,12 @@ fun Home(navController: NavController) {
         }
         Button(onClick = { navController.navigate("Register") }) {
             Text("Register")
+        }
+        Button(onClick = { navController.navigate("AllStories") }) {
+            Text("View Stories")
+        }
+        Button(onClick = { navController.navigate("CreateStory") }) {
+            Text("Create a Story")
         }
     }
 }
