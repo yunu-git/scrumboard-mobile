@@ -9,6 +9,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Task
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
+
 @Dao
 interface TaskDao {
     @Insert
@@ -18,8 +19,8 @@ interface TaskDao {
     @Delete
     suspend fun deleteTask(vararg task: Task)
     @Transaction
-    @Query("SELECT * FROM Task WHERE taskId = :taskId")
-    fun getTaskWithWorkLogs(taskId: Int): Flow<TaskWithWorkLogs>
+    @Query("SELECT * FROM Task WHERE storyId = :storyId AND taskId = :taskId")
+    fun getTasksWithWorkLogs(storyId: Int, taskId: Int): Flow<TaskWithWorkLogs>
     @Query("SELECT * FROM Task")
     fun getAllTasks(): Flow<List<Task>>
 }

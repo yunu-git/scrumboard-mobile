@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng303.scrumboardmobile.screens
+package nz.ac.canterbury.seng303.scrumboardmobile.screens.task
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -101,7 +100,7 @@ fun CreateTaskScreen (
                         .clickable { expandedPriority = true },
                     trailingIcon = {
                         IconButton(onClick = { expandedPriority = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "Task Priority")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Priority")
                         }
                     }
                 )
@@ -142,7 +141,7 @@ fun CreateTaskScreen (
                         .clickable { expandedComplexity = true },
                     trailingIcon = {
                         IconButton(onClick = { expandedComplexity = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "Task Complexity")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Complexity")
                         }
                     }
                 )

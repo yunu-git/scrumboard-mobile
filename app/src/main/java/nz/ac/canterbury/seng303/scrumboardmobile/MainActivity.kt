@@ -29,12 +29,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateStoryScreen
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.CreateTaskScreen
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.RegisterUserScreen
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.UserList
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewAllStories
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.ViewStoryScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.CreateStoryScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserList
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewAllStories
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
@@ -202,6 +203,25 @@ class MainActivity : ComponentActivity() {
                                                 storyIdParam.toInt()
                                             )
                                         }
+                                    )
+                                }
+                            }
+                            composable(
+                                "Story/{storyId}/Task/{taskId}",
+                                arguments = listOf(
+                                    navArgument("storyId") { type = NavType.StringType },
+                                    navArgument("taskId") { type = NavType.StringType }
+                                )
+                            ) { backStackEntry ->
+                                val storyId = backStackEntry.arguments?.getString("storyId")
+                                val taskId = backStackEntry.arguments?.getString("taskId")
+
+                                if (storyId != null && taskId != null) {
+                                    ViewTaskScreen(
+                                        navController = navController,
+                                        taskViewModel = taskViewModel,
+                                        storyId = storyId,
+                                        taskId = taskId
                                     )
                                 }
                             }

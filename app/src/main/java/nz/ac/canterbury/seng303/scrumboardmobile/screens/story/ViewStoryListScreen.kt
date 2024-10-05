@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng303.scrumboardmobile.screens
+package nz.ac.canterbury.seng303.scrumboardmobile.screens.story
 
 
 import androidx.compose.foundation.background

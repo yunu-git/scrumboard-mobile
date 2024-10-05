@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng303.scrumboardmobile.screens
+package nz.ac.canterbury.seng303.scrumboardmobile.screens.user
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

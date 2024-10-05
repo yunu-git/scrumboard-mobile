@@ -5,18 +5,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.dao.TaskDao
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Task
+import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
 
 class TaskViewModel (private val taskDao: TaskDao): ViewModel() {
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
     val tasks: StateFlow<List<Task>> get() = _tasks
-    fun getTasks() = viewModelScope.launch {
-        taskDao.getAllTasks().catch { Log.e("TASK_VIEW_MODEL", it.toString()) }
-            .collect { _tasks.emit(it) }
+    private val _selectedTaskWithWorkLogs = MutableStateFlow<TaskWithWorkLogs?>(null)
+    val selectedTaskWithWorkLogs: StateFlow<TaskWithWorkLogs?> get() = _selectedTaskWithWorkLogs
+
+    fun getTaskWithWorkLogs(storyId: Int?, taskId: Int?) = viewModelScope.launch {
+        if (storyId != null && taskId != null) {
+            _selectedTaskWithWorkLogs.value = taskDao.getTasksWithWorkLogs(
+                storyId = storyId,
+                taskId = taskId
+            ).first()
+        } else {
+            _selectedTaskWithWorkLogs.value = null
+        }
+
     }
 
     fun createTask(title: String,
