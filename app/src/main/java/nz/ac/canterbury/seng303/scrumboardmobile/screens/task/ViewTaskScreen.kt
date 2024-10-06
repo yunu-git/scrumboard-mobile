@@ -61,6 +61,8 @@ fun ViewTaskScreen(
     userViewModel.getUsers()
     val users: List<User> by userViewModel.users.collectAsState(emptyList())
     var expandedStatus by remember { mutableStateOf(false) }
+    var expandedAssignee by remember { mutableStateOf(false) }
+    var expandedReviewer by remember { mutableStateOf(false) }
 
     if (taskWithWorkLogs != null) {
         Scaffold(
@@ -155,7 +157,8 @@ fun ViewTaskScreen(
                                             },
                                             onClick = {
                                                 assignedStatus = status
-                                                taskViewModel.updateStatus(taskWithWorkLogs.task, status);
+                                                val updatedTask = taskWithWorkLogs.task.copy(status = status) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask);
                                                 expandedStatus = false
                                             }
                                         )
@@ -193,13 +196,107 @@ fun ViewTaskScreen(
                             Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Assignee: ${taskWithWorkLogs.task.assignedTo}")
+                            Box(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                var assignedTo by remember {
+                                    mutableStateOf(taskWithWorkLogs.task.assignedTo?.let { userId ->
+                                        findUserWithId(users, userId)?.firstName ?: ""  // Set to "" if user is not found
+                                    } ?: "")
+                                }
+                                OutlinedTextField(
+                                    value = assignedTo,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    label = { Text("Assignee") },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(0.dp)
+                                        .clickable { expandedAssignee = true },
+                                    trailingIcon = {
+                                        IconButton(onClick = { expandedAssignee = true }) {
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Assignee")
+                                        }
+                                    }
+                                )
+
+
+                                DropdownMenu(
+                                    expanded = expandedAssignee,
+                                    onDismissRequest = { expandedAssignee = false }
+                                ) {
+                                    // Iterate through the user values to create dropdown items
+                                    users.forEach { user ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = user.firstName)
+                                            },
+                                            onClick = {
+                                                assignedTo = user.firstName
+                                                val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask);
+                                                expandedAssignee = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
                         Column (
                             Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Reviewer: ${taskWithWorkLogs.task.reviewerId}")
+                            Box(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                var reviewer by remember {
+                                    mutableStateOf(taskWithWorkLogs.task.assignedTo?.let { userId ->
+                                        findUserWithId(users, userId)?.firstName ?: ""  // Set to "" if user is not found
+                                    } ?: "")
+                                }
+                                OutlinedTextField(
+                                    value = reviewer,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    label = { Text("Reviewer") },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(0.dp)
+                                        .clickable { expandedReviewer = true },
+                                    trailingIcon = {
+                                        IconButton(onClick = { expandedReviewer = true }) {
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Reviewer")
+                                        }
+                                    }
+                                )
+
+
+                                DropdownMenu(
+                                    expanded = expandedReviewer,
+                                    onDismissRequest = { expandedReviewer = false }
+                                ) {
+                                    // Iterate through the user values to create dropdown items
+                                    users.forEach { user ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = user.firstName)
+                                            },
+                                            onClick = {
+                                                expandedReviewer = false
+                                                reviewer = user.firstName
+                                                val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask);
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -219,4 +316,11 @@ fun ExtendedCreateWorkLogFab(
         text = { Text(text = "Add Work Log") },
         icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add WorkLog") }
     )
+}
+
+fun findUserWithId(
+    users: List<User>,
+    userId: Int
+): User? {
+    return users.find { it.userId == userId }
 }
