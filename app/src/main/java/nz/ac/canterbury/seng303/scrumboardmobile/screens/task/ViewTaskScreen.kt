@@ -255,7 +255,7 @@ fun ViewTaskScreen(
                                     .fillMaxWidth()
                             ) {
                                 var reviewer by remember {
-                                    mutableStateOf(taskWithWorkLogs.task.assignedTo?.let { userId ->
+                                    mutableStateOf(taskWithWorkLogs.task.reviewerId?.let { userId ->
                                         findUserWithId(users, userId)?.firstName ?: ""  // Set to "" if user is not found
                                     } ?: "")
                                 }
@@ -290,7 +290,7 @@ fun ViewTaskScreen(
                                             onClick = {
                                                 expandedReviewer = false
                                                 reviewer = user.firstName
-                                                val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
+                                                val updatedTask = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
                                                 taskViewModel.updateTask(updatedTask);
                                             }
                                         )
