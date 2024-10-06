@@ -234,8 +234,7 @@ class MainActivity : ComponentActivity() {
                                             createTaskViewModel.updateTitle(newTitle)
                                         },
                                         description = createTaskViewModel.description,
-
-                     onDescriptionChange = { newDescription ->
+                                        onDescriptionChange = { newDescription ->
                                             createTaskViewModel.updateDescription(newDescription)
                                         },
                                         estimate = createTaskViewModel.estimate,

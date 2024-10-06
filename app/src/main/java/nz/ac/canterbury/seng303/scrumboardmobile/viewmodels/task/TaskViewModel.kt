@@ -30,6 +30,17 @@ class TaskViewModel (private val taskDao: TaskDao): ViewModel() {
 
     }
 
+    // Updated function to update a task's status
+    fun updateStatus(task: Task, status: ScrumboardConstants.Status) = viewModelScope.launch {
+        val updatedTask = task.copy(status = status) // Create a copy of the task with updated status
+        try {
+            taskDao.updateTask(updatedTask) // Call DAO to update the task
+            Log.d("TASK_VIEW_MODEL", "Task status updated successfully")
+        } catch (e: Exception) {
+            Log.e("TASK_VIEW_MODEL", "Error updating task status", e)
+        }
+    }
+
     fun createTask(title: String,
                     description: String,
                     complexity: ScrumboardConstants.Complexity,

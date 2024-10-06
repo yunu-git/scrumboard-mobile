@@ -55,7 +55,6 @@ fun ViewTaskScreen(
     val selectedTaskState by taskViewModel.selectedTaskWithWorkLogs.collectAsState(null)
     val taskWithWorkLogs: TaskWithWorkLogs? = selectedTaskState
     var expandedStatus by remember { mutableStateOf(false) }
-    var assignedStatus by remember { mutableStateOf(ScrumboardConstants.Status.TO_DO) }
 
     if (taskWithWorkLogs != null) {
         Scaffold(
@@ -117,8 +116,7 @@ fun ViewTaskScreen(
                                     .fillMaxWidth()
                             ) {
                                 OutlinedTextField(
-//                                    value = taskWithWorkLogs.task.status.status,
-                                    value = assignedStatus.status,
+                                    value = taskWithWorkLogs.task.status.status,
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
@@ -134,6 +132,7 @@ fun ViewTaskScreen(
                                     }
                                 )
 
+
                                 DropdownMenu(
                                     expanded = expandedStatus,
                                     onDismissRequest = { expandedStatus = false }
@@ -146,7 +145,7 @@ fun ViewTaskScreen(
                                             },
                                             onClick = {
 //                                                onStatusChange(status)
-                                                assignedStatus = status
+                                                taskViewModel.updateStatus(taskWithWorkLogs.task, status);
                                                 expandedStatus = false
                                             }
                                         )
