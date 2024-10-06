@@ -115,8 +115,11 @@ fun ViewTaskScreen(
                                     .padding(vertical = 8.dp)
                                     .fillMaxWidth()
                             ) {
+                                var assignedStatus by remember {
+                                    mutableStateOf(taskWithWorkLogs.task.status)
+                                }
                                 OutlinedTextField(
-                                    value = taskWithWorkLogs.task.status.status,
+                                    value = assignedStatus.status,
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
@@ -144,7 +147,7 @@ fun ViewTaskScreen(
                                                 Text(text = status.status)
                                             },
                                             onClick = {
-//                                                onStatusChange(status)
+                                                assignedStatus = status
                                                 taskViewModel.updateStatus(taskWithWorkLogs.task, status);
                                                 expandedStatus = false
                                             }
