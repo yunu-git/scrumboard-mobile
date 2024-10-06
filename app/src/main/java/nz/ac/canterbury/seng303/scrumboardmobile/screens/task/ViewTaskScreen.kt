@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +74,7 @@ fun ViewTaskScreen(
             ) {
                 // Title
                 Text(
+                    modifier = Modifier.padding(16.dp),
                     text = taskWithWorkLogs.task.title,
                     style = MaterialTheme.typography.headlineMedium
                 )
@@ -123,7 +125,7 @@ fun ViewTaskScreen(
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
-                                    label = { Text("Task Priority") },
+                                    label = { Text("Task Status") },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(0.dp)
@@ -158,7 +160,7 @@ fun ViewTaskScreen(
 
                             // Estimate
                             Text(
-                                text = "Estimate: ${taskWithWorkLogs.task.estimate}",
+                                text = "Estimate: ${taskWithWorkLogs.task.estimate} hours",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.End
                             )
@@ -176,6 +178,23 @@ fun ViewTaskScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.End
                             )
+                        }
+                    }
+                    Row (
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column (
+                            Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "Reviewer: ${taskWithWorkLogs.task.reviewerId}")
+                        }
+                        Column (
+                            Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "Assigned: ${taskWithWorkLogs.task.assignedTo}")
                         }
                     }
                 }
