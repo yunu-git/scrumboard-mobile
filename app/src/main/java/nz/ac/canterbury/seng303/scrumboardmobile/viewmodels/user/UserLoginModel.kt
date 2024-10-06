@@ -4,6 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import nz.ac.canterbury.seng303.scrumboardmobile.models.User
+import nz.ac.canterbury.seng303.scrumboardmobile.util.hashPassword
 
 class UserLoginModel(): ViewModel() {
     var username by mutableStateOf("")
@@ -15,4 +21,5 @@ class UserLoginModel(): ViewModel() {
     fun updatePassword(newPassword: String) {
         password = newPassword
     }
+
 }

@@ -78,11 +78,9 @@ fun RegisterUserScreen(
                     onPasswordChange("")
                     onFirstNameChange("")
                     onLastNameChange("")
-
                     CoroutineScope(Dispatchers.IO).launch {
                         grantAuthentication()
                     }
-
                     navController.navigate("AllUsers")
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)

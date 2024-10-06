@@ -23,7 +23,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -37,8 +36,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.CreateStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
@@ -131,7 +133,8 @@ class MainActivity : ComponentActivity() {
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController,
-                                    isAuth = isAuth)
+                                    isAuth = isAuth,
+                                    removeAuthenticationFn = { removeAuthentication()})
                             }
                             composable("AllUsers") {
                                 UserList(navController = navController, userViewModel = userViewModel)
@@ -163,23 +166,22 @@ class MainActivity : ComponentActivity() {
                                             lastName
                                         )
                                     },
-                                    grantAuthentication ={ grantAuthentication() }
+                                    grantAuthentication = { grantAuthentication() }
                                 )
                             }
                             composable("Login") {
                                 LoginUserScreen(
+                                    userViewModel = userViewModel,
                                     navController = navController,
-                                    username = "",
+                                    username = userLoginModel.username,
                                     onUsernameChange = { newName ->
                                         userLoginModel.updateUsername(newName)
                                     },
-                                    password = "",
+                                    password = userLoginModel.password,
                                     onPasswordChange = { newPassword ->
                                         userLoginModel.updatePassword(newPassword)
                                     },
-                                    authenticateUserFn = {username, password ->
-                                        userViewModel.authenticateUser(username, password)
-                                    }
+                                    grantAuthentication = { grantAuthentication() }
                                 )
                             }
 
@@ -291,7 +293,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Home(navController: NavController,
-         isAuth: Flow<Boolean>) {
+         isAuth: Flow<Boolean>,
+         removeAuthenticationFn: suspend () -> Unit
+         ) {
     val isAuthenticated by isAuth.collectAsState(initial = false)
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -316,6 +320,13 @@ fun Home(navController: NavController,
             }
             Button(onClick = { navController.navigate("CreateStory") }) {
                 Text("Create a Story")
+            }
+            Button(onClick = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    removeAuthenticationFn()
+                }
+            }) {
+                Text(text = "Log out")
             }
         }
     }
