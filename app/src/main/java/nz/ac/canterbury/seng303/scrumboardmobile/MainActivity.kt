@@ -36,6 +36,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewAllStories
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.CreateWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
@@ -44,6 +45,8 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.CreateTaskViewM
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +54,7 @@ class MainActivity : ComponentActivity() {
     private val userViewModel: UserViewModel by koinViewModel()
     private val storyViewModel: StoryViewModel by koinViewModel()
     private val taskViewModel: TaskViewModel by koinViewModel()
+    private val workLogViewModel: WorkLogViewModel by koinViewModel()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +96,8 @@ class MainActivity : ComponentActivity() {
                         val createUserViewModel: CreateUserViewModel = viewModel()
                         val createStoryViewModel: CreateStoryViewModel = viewModel()
                         val createTaskViewModel: CreateTaskViewModel = viewModel()
+                        val createWorkLogViewModel: CreateWorkLogViewModel = viewModel()
+
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController)
@@ -225,6 +231,33 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
+
+                            composable(
+                                "Story/{storyId}/Task/{taskId}/CreateWorkLog",
+                                arguments = listOf(
+                                    navArgument("storyId") { type = NavType.StringType },
+                                    navArgument("taskId") { type = NavType.StringType }
+                                )
+                            ) { backStackEntry ->
+                                val storyId = backStackEntry.arguments?.getString("storyId")
+                                val taskId = backStackEntry.arguments?.getString("taskId")
+
+                                if (storyId != null && taskId != null) {
+                                    CreateWorkLogScreen(
+                                        navController = navController,
+                                        createWorkLogViewModel = createWorkLogViewModel,
+                                        workLogViewModel = workLogViewModel,
+                                        taskId = taskId.toInt(),
+                                        createdById = 1 //TODO : We need to insert the current user ID HERE
+
+                                    )
+                                }
+                            }
+
+
+
+
+
                         }
                     }
                 }

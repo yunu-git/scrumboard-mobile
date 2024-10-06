@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.datastore.Database
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -43,4 +44,6 @@ val appModule = module {
     viewModel { UserViewModel(get()) }
     viewModel { StoryViewModel(get()) }
     viewModel { TaskViewModel(get()) }
+    viewModel { WorkLogViewModel(get()) }
+
 }
