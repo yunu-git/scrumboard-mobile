@@ -40,14 +40,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
+import nz.ac.canterbury.seng303.scrumboardmobile.models.User
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @Composable
 fun ViewTaskScreen(
     navController: NavController,
     taskViewModel: TaskViewModel,
     storyId: String,
-    taskId: String
+    taskId: String,
+    userViewModel: UserViewModel
 ) {
     taskViewModel.getTaskWithWorkLogs(
         storyId = storyId.toIntOrNull(),
@@ -55,6 +58,8 @@ fun ViewTaskScreen(
     )
     val selectedTaskState by taskViewModel.selectedTaskWithWorkLogs.collectAsState(null)
     val taskWithWorkLogs: TaskWithWorkLogs? = selectedTaskState
+    userViewModel.getUsers()
+    val users: List<User> by userViewModel.users.collectAsState(emptyList())
     var expandedStatus by remember { mutableStateOf(false) }
 
     if (taskWithWorkLogs != null) {
@@ -188,13 +193,13 @@ fun ViewTaskScreen(
                             Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Reviewer: ${taskWithWorkLogs.task.reviewerId}")
+                            Text(text = "Assignee: ${taskWithWorkLogs.task.assignedTo}")
                         }
                         Column (
                             Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = "Assigned: ${taskWithWorkLogs.task.assignedTo}")
+                            Text(text = "Reviewer: ${taskWithWorkLogs.task.reviewerId}")
                         }
                     }
                 }

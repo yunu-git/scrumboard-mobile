@@ -277,7 +277,8 @@ class MainActivity : ComponentActivity() {
                                         navController = navController,
                                         taskViewModel = taskViewModel,
                                         storyId = storyId,
-                                        taskId = taskId
+                                        taskId = taskId,
+                                        userViewModel = userViewModel
                                     )
                                 }
                             }
