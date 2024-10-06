@@ -11,7 +11,7 @@ interface ScrumboardConstants {
     enum class Status(val status: String) {
         TO_DO("To Do"),
         IN_PROGRESS("In Progress"),
-        UNDER_REVIEW("Under Review"),
+        UNDER_REVIEW("Review"),
         DONE("Done")
     }
 
