@@ -10,18 +10,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserLoginModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @Composable
@@ -35,7 +31,6 @@ fun LoginUserScreen(
     grantAuthentication: suspend () -> Unit )
 {
     val context = LocalContext.current
-    val isAuth by userViewModel.isAuthenticated.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -68,15 +63,15 @@ fun LoginUserScreen(
 
             Button(
                 onClick = {
-                    userViewModel.authenticateUser(username, password)
-                    if (isAuth) {
-                        navController.popBackStack()
-                        CoroutineScope(Dispatchers.IO).launch {
+                    userViewModel.viewModelScope.launch {
+                        val isAuth = userViewModel.authenticateUser(username, password)
+                        if (isAuth) {
+                            navController.popBackStack()
                             grantAuthentication()
-                        }
-                    } else {
-                        if (username.isNotEmpty() && password.isNotEmpty()) {
-                            Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                        } else {
+                            if (username.isNotEmpty() && password.isNotEmpty()) {
+                                Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 },

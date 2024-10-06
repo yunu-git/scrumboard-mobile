@@ -16,8 +16,6 @@ class UserViewModel(
 ): ViewModel() {
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> get() = _users
-    private val _isAuthenticated = MutableStateFlow<Boolean>(false)
-    val isAuthenticated: StateFlow<Boolean> get() = _isAuthenticated
     fun getUsers() = viewModelScope.launch {
         userDao.getAllUsers().catch { Log.e("USER_VIEW_MODEL", it.toString()) }
             .collect { _users.emit(it) }
@@ -41,10 +39,8 @@ class UserViewModel(
         }
     }
 
-    fun authenticateUser(username: String, password: String) {
-        viewModelScope.launch {
-            val user: User? = userDao.findByUsername(username)
-            _isAuthenticated.value = !(user == null || user.password != hashPassword(password))
-        }
+    suspend fun authenticateUser(username: String, password: String): Boolean {
+        val user: User? = userDao.findByUsername(username)
+        return !(user == null || user.password != hashPassword(password))
     }
 }
