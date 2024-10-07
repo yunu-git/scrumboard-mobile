@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,13 +60,34 @@ fun ViewTaskScreen(
     )
     val selectedTaskState by taskViewModel.selectedTaskWithWorkLogs.collectAsState(null)
     val taskWithWorkLogs: TaskWithWorkLogs? = selectedTaskState
+
     userViewModel.getUsers()
     val users: List<User> by userViewModel.users.collectAsState(emptyList())
+
     var expandedStatus by remember { mutableStateOf(false) }
     var expandedAssignee by remember { mutableStateOf(false) }
     var expandedReviewer by remember { mutableStateOf(false) }
 
-    if (taskWithWorkLogs != null) {
+    var assignedStatus by remember { mutableStateOf<String?>(null) }
+    var assignedTo by remember { mutableStateOf<String?>(null) }
+    var reviewer by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(taskWithWorkLogs, users) {
+        taskWithWorkLogs?.let {
+            assignedStatus = it.task.status.status
+            assignedTo = it.task.assignedTo?.let { userId ->
+                findUserWithId(users, userId)?.firstName
+            } ?: ""
+            reviewer = it.task.reviewerId?.let { userId ->
+                findUserWithId(users, userId)?.firstName
+            } ?: ""
+        }
+    }
+
+    if (taskWithWorkLogs == null || users.isEmpty()) {
+        // Display a loading state until the data is ready
+        CircularProgressIndicator()
+    } else {
         Scaffold(
             floatingActionButton = {
                 ExtendedCreateWorkLogFab(
@@ -124,11 +147,8 @@ fun ViewTaskScreen(
                                     .padding(vertical = 8.dp)
                                     .fillMaxWidth()
                             ) {
-                                var assignedStatus by remember {
-                                    mutableStateOf(taskWithWorkLogs.task.status)
-                                }
                                 OutlinedTextField(
-                                    value = assignedStatus.status,
+                                    value = assignedStatus ?: "",
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
@@ -156,7 +176,7 @@ fun ViewTaskScreen(
                                                 Text(text = status.status)
                                             },
                                             onClick = {
-                                                assignedStatus = status
+                                                assignedStatus = status.status
                                                 val updatedTask = taskWithWorkLogs.task.copy(status = status) // Create a copy of the task with updated status
                                                 taskViewModel.updateTask(updatedTask);
                                                 expandedStatus = false
@@ -201,13 +221,8 @@ fun ViewTaskScreen(
                                     .padding(8.dp)
                                     .fillMaxWidth()
                             ) {
-                                var assignedTo by remember {
-                                    mutableStateOf(taskWithWorkLogs.task.assignedTo?.let { userId ->
-                                        findUserWithId(users, userId)?.firstName ?: ""  // Set to "" if user is not found
-                                    } ?: "")
-                                }
                                 OutlinedTextField(
-                                    value = assignedTo,
+                                    value = assignedTo.toString(),
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
@@ -254,13 +269,8 @@ fun ViewTaskScreen(
                                     .padding(8.dp)
                                     .fillMaxWidth()
                             ) {
-                                var reviewer by remember {
-                                    mutableStateOf(taskWithWorkLogs.task.reviewerId?.let { userId ->
-                                        findUserWithId(users, userId)?.firstName ?: ""  // Set to "" if user is not found
-                                    } ?: "")
-                                }
                                 OutlinedTextField(
-                                    value = reviewer,
+                                    value = reviewer.toString(),
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
@@ -290,8 +300,8 @@ fun ViewTaskScreen(
                                             onClick = {
                                                 expandedReviewer = false
                                                 reviewer = user.firstName
-                                                val updatedTask = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
-                                                taskViewModel.updateTask(updatedTask);
+                                                val updatedTask2 = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask2);
                                             }
                                         )
                                     }
