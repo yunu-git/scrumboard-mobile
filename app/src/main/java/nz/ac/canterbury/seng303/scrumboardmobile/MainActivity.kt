@@ -44,7 +44,6 @@ import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.CreateStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewAllStories
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
