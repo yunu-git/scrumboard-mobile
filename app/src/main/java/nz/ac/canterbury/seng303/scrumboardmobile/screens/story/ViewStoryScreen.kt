@@ -35,6 +35,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,7 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var currentStatusIndex by remember { mutableIntStateOf(0) }
+    val cardWidth = remember { mutableStateOf(0) }
 
     Column {
         LazyRow(
@@ -103,12 +105,15 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(ScrumboardConstants.Status.entries) { _, status ->
+            itemsIndexed(ScrumboardConstants.Status.entries) { index, status ->
                 ElevatedCard(
                     modifier = Modifier
                         .fillParentMaxHeight(0.7f)
                         .fillParentMaxWidth(0.9f)
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .onGloballyPositioned { coordinates ->
+                            cardWidth.value = coordinates.size.width
+                        },
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 6.dp
                     ),
@@ -148,11 +153,20 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
         }
     }
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex }
-            .collect { index ->
-                currentStatusIndex = index
+    LaunchedEffect(listState, cardWidth.value) {
+        snapshotFlow {
+            val firstVisibleItemIndex = listState.firstVisibleItemIndex
+            val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
+            val halfCardWidth = cardWidth.value / 2
+
+            when {
+                firstVisibleItemScrollOffset > halfCardWidth -> firstVisibleItemIndex + 1
+                firstVisibleItemScrollOffset < -halfCardWidth -> firstVisibleItemIndex - 1
+                else -> firstVisibleItemIndex
             }
+        }.collect { index ->
+            currentStatusIndex = index.coerceIn(0, ScrumboardConstants.Status.entries.size - 1)
+        }
     }
 }
 

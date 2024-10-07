@@ -81,7 +81,7 @@ fun RegisterUserScreen(
                     CoroutineScope(Dispatchers.IO).launch {
                         grantAuthentication()
                     }
-                    navController.navigate("AllUsers")
+                    navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
             ) {

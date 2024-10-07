@@ -44,7 +44,6 @@ import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.CreateStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
-import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserList
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewAllStories
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
@@ -136,9 +135,6 @@ class MainActivity : ComponentActivity() {
                                     isAuth = isAuth,
                                     removeAuthenticationFn = { removeAuthentication()})
                             }
-                            composable("AllUsers") {
-                                UserList(navController = navController, userViewModel = userViewModel)
-                            }
                             composable("Register") {
                                 RegisterUserScreen(
                                     navController = navController,
@@ -173,11 +169,11 @@ class MainActivity : ComponentActivity() {
                                 LoginUserScreen(
                                     userViewModel = userViewModel,
                                     navController = navController,
-                                    username = userLoginModel.username,
+                                    username = userLoginModel.loginUsername,
                                     onUsernameChange = { newName ->
                                         userLoginModel.updateUsername(newName)
                                     },
-                                    password = userLoginModel.password,
+                                    password = userLoginModel.loginPassword,
                                     onPasswordChange = { newPassword ->
                                         userLoginModel.updatePassword(newPassword)
                                     },
@@ -303,9 +299,6 @@ fun Home(navController: NavController,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Welcome to ScrumBoard")
-        Button(onClick = { navController.navigate("AllUsers") }) {
-            Text("View Users")
-        }
         if (!isAuthenticated) {
             Button(onClick = { navController.navigate("Register") }) {
                 Text("Register")
