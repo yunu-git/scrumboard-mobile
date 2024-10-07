@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -63,6 +65,7 @@ fun ViewTaskScreen(
     val taskWithWorkLogs: TaskWithWorkLogs? = selectedTaskState
     var expandedStatus by remember { mutableStateOf(false) }
     var assignedStatus by remember { mutableStateOf(ScrumboardConstants.Status.TO_DO) }
+    val scrollState = rememberScrollState()
 
     if (taskWithWorkLogs != null) {
         Scaffold(
@@ -78,6 +81,7 @@ fun ViewTaskScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .verticalScroll(scrollState)
             ) {
 
                     // Title
@@ -239,6 +243,7 @@ fun ViewTaskScreen(
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(90.dp))
             }
         }
     }
