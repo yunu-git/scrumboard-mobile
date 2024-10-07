@@ -159,6 +159,7 @@ fun StoryCard(
 
 @Composable
 fun TaskStatusBar(tasks: List<Task>) {
+    val tasksToDo = tasks.count { it.status == ScrumboardConstants.Status.TO_DO }
     val tasksInProgress = tasks.count { it.status == ScrumboardConstants.Status.IN_PROGRESS }
     val tasksInReview = tasks.count { it.status == ScrumboardConstants.Status.UNDER_REVIEW }
     val tasksInDone = tasks.count { it.status == ScrumboardConstants.Status.DONE }
@@ -171,6 +172,14 @@ fun TaskStatusBar(tasks: List<Task>) {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             if (totalTasks > 0) {
+                if (tasksToDo > 0) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(tasksToDo.toFloat())
+                            .background(Color.White)
+                    )
+                }
                 if (tasksInProgress > 0) {
                     Box(
                         modifier = Modifier
