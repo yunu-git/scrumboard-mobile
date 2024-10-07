@@ -203,13 +203,18 @@ class MainActivity : ComponentActivity() {
                                     onDescriptionChange = { newDescription ->
                                         createStoryViewModel.updateDescription(newDescription)
                                     },
-                                    createStoryFn = { title, description,timeCreated  ->
+                                    dateTime = createStoryViewModel.dueAt,
+                                    onDateTimeChange = { newDate -> createStoryViewModel.updateDueAt(newDate)},
+
+                                    createStoryFn = { title, description, timeCreated, date  ->
                                         storyViewModel.createStory(
                                             title,
                                             description,
-                                            timeCreated
+                                            timeCreated,
+                                            date
                                         )
-                                    }
+                                    },
+                                    clearFields = { createStoryViewModel.clearFields() }
                                 )
                             }
 
