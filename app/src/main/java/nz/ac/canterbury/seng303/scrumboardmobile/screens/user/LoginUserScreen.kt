@@ -66,6 +66,8 @@ fun LoginUserScreen(
                     userViewModel.viewModelScope.launch {
                         val isAuth = userViewModel.authenticateUser(username, password)
                         if (isAuth) {
+                            onUsernameChange("")
+                            onPasswordChange("")
                             navController.popBackStack()
                             grantAuthentication()
                         } else {
