@@ -17,6 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -33,9 +36,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -187,24 +193,58 @@ fun ViewTaskScreen(
 ///////////////////////// this is temporary stuff to check worklogs /////////////////////////////
 
                 // Display work logs
-                Text("Work Logs:", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Work Logs",
+                    style = MaterialTheme.typography.headlineMedium
+                )
                 taskWithWorkLogs.workLogs.forEach { workLog ->
-                    Card(
+                    ElevatedCard(
                         modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                "Date: ${
-                                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
-                                        Date(workLog.time)
-                                    )
-                                }"
-                            )
-                            Text("Hours: ${workLog.workingHours}")
-                            Text("Description: ${workLog.description}")
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                // Date in the top-left
+                                Text(
+                                    text =
+                                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                                            Date(workLog.time)
+                                        ),
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
 
+                                // Hours in a chip at the top-right
+                                AssistChip(
+                                    onClick = { /* No action needed for display purposes */ },
+                                    label = {
+                                        Text("${workLog.workingHours}h")
+                                    },
+                                    modifier = Modifier.align(Alignment.CenterVertically),
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = MaterialTheme.colorScheme.primary, // Use primary theme color
+                                        labelColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                )
+                            }
+
+                            // Description below the date and hours
+                            Text(workLog.description)
+//                            Spacer(modifier = Modifier.height(8.dp))
+                            Divider(modifier = Modifier.padding(vertical = 8.dp))
+//                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Text(text = "${workLog.createdById}")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
                 }
