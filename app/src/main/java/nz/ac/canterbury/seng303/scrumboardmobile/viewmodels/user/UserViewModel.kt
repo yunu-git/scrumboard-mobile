@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.dao.UserDao
 import nz.ac.canterbury.seng303.scrumboardmobile.models.User
+import nz.ac.canterbury.seng303.scrumboardmobile.util.hashPassword
 
 class UserViewModel(
     private val userDao: UserDao
@@ -37,5 +38,9 @@ class UserViewModel(
             Log.e("USER_VIEW_MODEL", "Could not insert User", e)
         }
     }
-    
+
+    suspend fun authenticateUser(username: String, password: String): Boolean {
+        val user: User? = userDao.findByUsername(username)
+        return !(user == null || user.password != hashPassword(password))
+    }
 }

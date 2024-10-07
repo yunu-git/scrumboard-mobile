@@ -12,4 +12,7 @@ interface UserDao {
     suspend fun insertUser(vararg user: User)
     @Query("SELECT * FROM User")
     fun getAllUsers(): Flow<List<User>>
+    @Query("SELECT * FROM User WHERE username = :username")
+    suspend
+    fun findByUsername(username: String): User?
 }
