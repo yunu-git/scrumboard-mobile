@@ -20,20 +20,4 @@ class WorkLogViewModel(private val workLogDao: WorkLogDao) : ViewModel() {
             workLogDao.insertWorkLog(workLog)
         }
     }
-
-    fun updateWorkLog(
-                workLog: WorkLog
-    ) {
-        viewModelScope.launch {
-            workLogDao.updateWorkLog(workLog)
-        }
-    }
-
-    fun deleteWorkLog(
-                workLog: WorkLog
-    ) {
-        viewModelScope.launch {
-            workLogDao.deleteWorkLog(workLog)
-        }
-    }
 }

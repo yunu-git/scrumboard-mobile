@@ -1,16 +1,25 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog
 
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.datetime.Instant
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.datetime.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,6 +31,7 @@ fun CreateWorkLogScreen(
     createdById: Int
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -45,24 +55,41 @@ fun CreateWorkLogScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
-                value = createWorkLogViewModel.time,
-                onValueChange = { },
-                label = { Text("Date") },
-                modifier = Modifier.weight(1f),
-                readOnly = true
-            )
-            TextButton(onClick = { showDatePicker = true }) {
-                Text("Select Date")
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                OutlinedTextField(
+                    value = createWorkLogViewModel.time.toString(),
+                    onValueChange = { },
+                    label = { Text("Date") },
+                    readOnly = true,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Select date"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable { showDatePicker = true }
+                )
             }
 
-
             Spacer(modifier = Modifier.width(8.dp))
+
             OutlinedTextField(
                 value = createWorkLogViewModel.workingHours,
-                onValueChange = { createWorkLogViewModel.updateWorkingHours(it) },
+                onValueChange = { newValue ->
+                    if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                        createWorkLogViewModel.updateWorkingHours(newValue)
+                    }
+                },
                 label = { Text("Hours") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -70,18 +97,27 @@ fun CreateWorkLogScreen(
 
         Button(
             onClick = {
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val timeMillis = dateFormat.parse(createWorkLogViewModel.time)?.time ?: System.currentTimeMillis()
+                val timeMillis = createWorkLogViewModel.time.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
 
-                workLogViewModel.createWorkLog(
-                    taskId = taskId,
-                    description = createWorkLogViewModel.description,
-                    time = timeMillis,
-                    workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
-                    createdById = createdById
-                )
-                createWorkLogViewModel.clearInputs()
-                navController.popBackStack()
+                when {
+                    createWorkLogViewModel.description.trim().isEmpty() -> {
+                        Toast.makeText(context, "Description cannot be empty", Toast.LENGTH_SHORT).show()
+                    }
+                    createWorkLogViewModel.workingHours.toIntOrNull()?.let { it <= 0 } ?: true -> {
+                        Toast.makeText(context, "Enter valid working hour(s)", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        workLogViewModel.createWorkLog(
+                            taskId = taskId,
+                            description = createWorkLogViewModel.description,
+                            time = timeMillis,
+                            workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
+                            createdById = createdById
+                        )
+                        createWorkLogViewModel.clearInputs()
+                        navController.popBackStack()
+                    }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -106,9 +142,10 @@ fun CreateWorkLogScreen(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
-                            val date = Date(it)
-                            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                            createWorkLogViewModel.updateTime(formatter.format(date))
+                            val localDate = Instant.fromEpochMilliseconds(it)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
+                            createWorkLogViewModel.updateTime(localDate)
                         }
                         showDatePicker = false
                     }
@@ -123,6 +160,12 @@ fun CreateWorkLogScreen(
             }
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            createWorkLogViewModel.clearInputs()
         }
     }
 }

@@ -78,7 +78,8 @@ fun ViewTaskScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // Title
+
+                    // Title
                 Text(
                     text = taskWithWorkLogs.task.title,
                     style = MaterialTheme.typography.headlineMedium
@@ -183,6 +184,34 @@ fun ViewTaskScreen(
                         }
                     }
                 }
+///////////////////////// this is temporary stuff to check worklogs /////////////////////////////
+
+                // Display work logs
+                Text("Work Logs:", style = MaterialTheme.typography.titleLarge)
+                taskWithWorkLogs.workLogs.forEach { workLog ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                "Date: ${
+                                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                                        Date(workLog.time)
+                                    )
+                                }"
+                            )
+                            Text("Hours: ${workLog.workingHours}")
+                            Text("Description: ${workLog.description}")
+
+                        }
+                    }
+                }
+///////////////////////// this is temporary stuff to check worklogs /////////////////////////////
+
+
+
             }
         }
     }

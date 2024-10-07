@@ -4,14 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone
 
 class CreateWorkLogViewModel : ViewModel() {
     var description by mutableStateOf("")
         private set
 
-    var time by mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()))
+    var time by mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
         private set
 
     var workingHours by mutableStateOf("")
@@ -21,7 +21,7 @@ class CreateWorkLogViewModel : ViewModel() {
         description = newDescription
     }
 
-    fun updateTime(newTime: String) {
+    fun updateTime(newTime: LocalDate) {
         time = newTime
     }
 
@@ -31,7 +31,7 @@ class CreateWorkLogViewModel : ViewModel() {
 
     fun clearInputs() {
         description = ""
-        time = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         workingHours = ""
     }
 }
