@@ -33,12 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.StoryWithTasks
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Task
@@ -48,6 +51,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 
 @Composable
 fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel) {
+    val context = LocalContext.current
     storyViewModel.getStories()
     val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
     if (storiesWithTasks.isNotEmpty()) {
@@ -81,14 +85,14 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "No stories available.",
+                    text = ContextCompat.getString(context, R.string.no_stories_available_1),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(
                     modifier = Modifier.height(8.dp)
                 )
                 Text(
-                    text = "You can create some here.",
+                    text = ContextCompat.getString(context, R.string.no_stories_available_2),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(
@@ -97,7 +101,7 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
                 Button(
                     onClick = {navController.navigate("CreateStory")}
                 ) {
-                    Text(text = "Create a Story")
+                    Text(text = ContextCompat.getString(context, R.string.create_a_story_label))
                 }
             }
         }

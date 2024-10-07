@@ -26,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 
 @Composable
@@ -60,7 +62,7 @@ fun CreateTaskScreen (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Create a Task for your Story")
+        Text(ContextCompat.getString(context, R.string.create_a_task_label))
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -69,7 +71,7 @@ fun CreateTaskScreen (
             OutlinedTextField(
                 value = title,
                 onValueChange = { onTitleChange(it) },
-                label = { Text("Task Title") },
+                label = { Text(ContextCompat.getString(context, R.string.task_title)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -78,7 +80,7 @@ fun CreateTaskScreen (
             OutlinedTextField(
                 value = description,
                 onValueChange = { onDescriptionChange(it) },
-                label = { Text("Description") },
+                label = { Text(ContextCompat.getString(context, R.string.task_description)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -94,13 +96,13 @@ fun CreateTaskScreen (
                     value = selectedPriority.priority,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Task Priority") },
+                    label = { Text(ContextCompat.getString(context, R.string.task_priority)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { expandedPriority = true },
                     trailingIcon = {
                         IconButton(onClick = { expandedPriority = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Priority")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = ContextCompat.getString(context, R.string.task_priority))
                         }
                     }
                 )
@@ -135,13 +137,13 @@ fun CreateTaskScreen (
                     value = selectedComplexity.complexity,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Task Complexity") },
+                    label = { Text(ContextCompat.getString(context, R.string.task_complexity)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { expandedComplexity = true },
                     trailingIcon = {
                         IconButton(onClick = { expandedComplexity = true }) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Complexity")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = ContextCompat.getString(context, R.string.task_complexity))
                         }
                     }
                 )
@@ -178,7 +180,7 @@ fun CreateTaskScreen (
                         onEstimateChange(it.toInt())
                     }
                 },
-                label = { Text("Task Estimate") },
+                label = { Text(ContextCompat.getString(context, R.string.task_estimate)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -188,22 +190,22 @@ fun CreateTaskScreen (
                 onClick = {
                     when {
                         title.trim().isEmpty() -> {
-                            Toast.makeText(context, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.title_empty_message), Toast.LENGTH_SHORT).show()
                         }
                         description.trim().isEmpty() -> {
-                            Toast.makeText(context, "Description cannot be unset", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.description_empty_message), Toast.LENGTH_SHORT).show()
                         }
                         selectedPriority == ScrumboardConstants.Priority.UNSET -> {
-                            Toast.makeText(context, "Priority cannot be unset", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.priority_unset_message), Toast.LENGTH_SHORT).show()
                         }
                         selectedComplexity == ScrumboardConstants.Complexity.UNSET -> {
-                            Toast.makeText(context, "Complexity cannot be unset", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.complexity_unset_message), Toast.LENGTH_SHORT).show()
                         }
                         integerValue == "" -> {
-                            Toast.makeText(context, "Estimate cannot be empty", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.estimate_empty_message), Toast.LENGTH_SHORT).show()
                         }
                         estimate <= 0 -> {
-                            Toast.makeText(context, "Estimate must be a positive integer", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, ContextCompat.getString(context, R.string.estimate_negative_message), Toast.LENGTH_SHORT).show()
                         }
                         else -> {
                             createTaskFn(title, description, estimate, selectedPriority, selectedComplexity)
@@ -219,7 +221,7 @@ fun CreateTaskScreen (
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             ) {
-                Text("Create Task")
+                Text(ContextCompat.getString(context, R.string.create_task_label))
             }
         }
     }
