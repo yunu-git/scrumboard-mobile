@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.user
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,32 +12,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @Composable
-fun RegisterUserScreen(
+fun LoginUserScreen(
+    userViewModel: UserViewModel,
     navController: NavController,
     username: String,
     onUsernameChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    firstName: String,
-    onFirstNameChange: (String) -> Unit,
-    lastName: String,
-    onLastNameChange: (String) -> Unit,
-    createUserFn: (String, String, String, String) -> Unit,
-    grantAuthentication: suspend () -> Unit ) {
+    grantAuthentication: suspend () -> Unit )
+{
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Register for ScrumBoard Mobile")
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -46,7 +46,9 @@ fun RegisterUserScreen(
                 value = username,
                 onValueChange = { onUsernameChange(it) },
                 label = { Text("Username") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
@@ -54,39 +56,32 @@ fun RegisterUserScreen(
                 onValueChange = { onPasswordChange(it) },
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-
-            OutlinedTextField(
-                value = firstName,
-                onValueChange = { onFirstNameChange(it) },
-                label = { Text("First Name") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { onLastNameChange(it) },
-                label = { Text("Last Name") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             Button(
                 onClick = {
-                    createUserFn(username, password, firstName, lastName)
-                    onUsernameChange("")
-                    onPasswordChange("")
-                    onFirstNameChange("")
-                    onLastNameChange("")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        grantAuthentication()
+                    userViewModel.viewModelScope.launch {
+                        val isAuth = userViewModel.authenticateUser(username, password)
+                        if (isAuth) {
+                            onUsernameChange("")
+                            onPasswordChange("")
+                            navController.popBackStack()
+                            grantAuthentication()
+                        } else {
+                            if (username.isNotEmpty() && password.isNotEmpty()) {
+                                Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                    navController.popBackStack()
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
             ) {
-                Text("Register")
+                Text("Login")
             }
         }
     }
+
 }
