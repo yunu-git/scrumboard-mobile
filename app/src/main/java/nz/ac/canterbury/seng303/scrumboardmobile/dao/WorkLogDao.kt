@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng303.scrumboardmobile.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import nz.ac.canterbury.seng303.scrumboardmobile.models.WorkLog
 
@@ -14,4 +16,7 @@ interface WorkLogDao {
     suspend fun updateWorkLog(vararg workLog: WorkLog)
     @Delete
     suspend fun deleteWorkLog(vararg workLog: WorkLog)
+    @Transaction
+    @Query("SELECT userId FROM WorkLog WHERE workLogId = :workLogId")
+    fun getUserIdWithUsers(workLogId: Int): Int?
 }

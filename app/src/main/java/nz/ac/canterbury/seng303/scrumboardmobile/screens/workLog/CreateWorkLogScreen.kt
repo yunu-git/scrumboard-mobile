@@ -14,22 +14,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
 import kotlinx.datetime.*
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateWorkLogScreen(
     navController: NavController,
     createWorkLogViewModel: CreateWorkLogViewModel,
+    userViewModel: UserViewModel,
     workLogViewModel: WorkLogViewModel,
     taskId: Int,
-    createdById: Int
 ) {
+    val currentUser by userViewModel.currentUser.collectAsState()
+    val scope = rememberCoroutineScope()
     var showDatePicker by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -107,15 +111,21 @@ fun CreateWorkLogScreen(
                         Toast.makeText(context, "Enter valid working hour(s)", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        workLogViewModel.createWorkLog(
-                            taskId = taskId,
-                            description = createWorkLogViewModel.description,
-                            time = timeMillis,
-                            workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
-                            createdById = createdById
-                        )
-                        createWorkLogViewModel.clearInputs()
-                        navController.popBackStack()
+                        currentUser?.let { user ->
+                            scope.launch {
+                                workLogViewModel.createWorkLog(
+                                    userId = user.userId,
+                                    taskId = taskId,
+                                    description = createWorkLogViewModel.description,
+                                    time = timeMillis,
+                                    workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
+                                )
+                                createWorkLogViewModel.clearInputs()
+                                navController.popBackStack()
+                            }
+                        } ?: run {
+                            Toast.makeText(context, "No user logged in", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             },

@@ -280,6 +280,7 @@ class MainActivity : ComponentActivity() {
                                     ViewTaskScreen(
                                         navController = navController,
                                         taskViewModel = taskViewModel,
+                                        userViewModel = userViewModel,
                                         storyId = storyId,
                                         taskId = taskId
                                     )
@@ -300,10 +301,9 @@ class MainActivity : ComponentActivity() {
                                     CreateWorkLogScreen(
                                         navController = navController,
                                         createWorkLogViewModel = createWorkLogViewModel,
+                                        userViewModel = userViewModel,
                                         workLogViewModel = workLogViewModel,
-                                        taskId = taskId.toInt(),
-                                        createdById = 1 //TODO : We need to insert the current user ID HERE
-
+                                        taskId = taskId.toInt()
                                     )
                                 }
                             }

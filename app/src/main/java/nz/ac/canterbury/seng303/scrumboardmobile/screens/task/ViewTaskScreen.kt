@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,6 +56,7 @@ import java.util.Locale
 fun ViewTaskScreen(
     navController: NavController,
     taskViewModel: TaskViewModel,
+    userViewModel: UserViewModel,
     storyId: String,
     taskId: String
 ) {
@@ -65,6 +68,8 @@ fun ViewTaskScreen(
     val taskWithWorkLogs: TaskWithWorkLogs? = selectedTaskState
     var expandedStatus by remember { mutableStateOf(false) }
     var assignedStatus by remember { mutableStateOf(ScrumboardConstants.Status.TO_DO) }
+    var username by remember { mutableStateOf("Loading...") }
+
     val scrollState = rememberScrollState()
 
     if (taskWithWorkLogs != null) {
@@ -230,6 +235,10 @@ fun ViewTaskScreen(
                                 )
                             }
 
+                            LaunchedEffect(workLog.userId) {
+                                username =
+                                    userViewModel.getUserNameById(workLog.userId)?.username ?: "Unknown User"
+                            }
                             // Description
                             Text(workLog.description)
                             Divider(modifier = Modifier.padding(vertical = 8.dp))
@@ -237,7 +246,8 @@ fun ViewTaskScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                Text(text = "${workLog.createdById}")
+                                Text(text = "${username }")
+                                Text(text = "${workLog.userId }")
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
