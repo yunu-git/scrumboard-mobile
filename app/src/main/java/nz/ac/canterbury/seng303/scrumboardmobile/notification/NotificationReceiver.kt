@@ -1,30 +1,32 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.notification
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.NotificationCompat
+import android.util.Log
 import androidx.work.impl.utils.ForceStopRunnable.BroadcastReceiver
 import nz.ac.canterbury.seng303.scrumboardmobile.R
 
 const val notificationId = 1
-const val channelId = "channel1"
-const val titleExtra = "titleExtra"
-const val messageExtra = "messageExtra"
-
+const val channelId = "scrumBoardMobile"
 
 @SuppressLint("RestrictedApi")
 class NotificationReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
-        val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(intent?.getStringExtra(titleExtra))
-            .setContentText(intent?.getStringExtra(messageExtra))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+        Log.i("NOTIFICATION_RECEIVER", "Received notification")
+        val extras = intent?.getBundleExtra(Intent.EXTRA_TEXT)
+        if (extras != null) {
+            val notification = Notification.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(extras.getString("notificationTitle"))
+                .setContentText(extras.getString("notificationDescription"))
+                .build()
 
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(notificationId, notification)
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(notificationId, notification)
+        }
+
     }
 }

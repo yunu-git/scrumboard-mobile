@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng303.scrumboardmobile
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.os.Build
+import androidx.core.content.ContextCompat
 import androidx.room.Room
 import nz.ac.canterbury.seng303.scrumboardmobile.datastore.Database
 import nz.ac.canterbury.seng303.scrumboardmobile.notification.channelId
@@ -30,13 +32,15 @@ class MainApplication : Application() {
     }
 
     private fun createNotificationChannel() {
-        val name = "Notif"
-        val desc = "desc"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(channelId, name, importance)
-        channel.description = desc
+        val descriptionText = getString(R.string.notification_title)
+        val mChannel = NotificationChannel(
+            channelId,
+            getString(R.string.app_name),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        mChannel.description = descriptionText
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(mChannel)
     }
 }
 

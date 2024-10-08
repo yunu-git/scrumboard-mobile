@@ -16,6 +16,9 @@
     <string name="cancel.label">Cancel</string>
     <string name="login.label">Log In</string>
     <string name="register.label">Register</string>
+    <string name="enable.label">Enable</string>
+    <string name="back.label">Back</string>
+
 
 
     <!-- Headers -->
@@ -48,6 +51,7 @@
     <!-- Notifications -->
     <string name="notification_title">ScrumBoard: Deadline Reminder</string>
     <string name="notification_message">Notification Message</string>
+    <string name="story_due_message">%1$s is due now.</string>
 
     <!-- Login / Register -->
     <string name="register_header">Register for ScrumBoard Mobile</string>
@@ -69,6 +73,7 @@
 
     <string name="story_due_date">Due Date</string>
     <string name="story_due_time">Due Time</string>
+    <string name="due_at">Due at</string>
 
     <!-- View Stories -->
     <string name="no_stories_available_1">No stories available.</string>
@@ -100,5 +105,13 @@
 
     <!-- Create Work Log Validation Messages -->
     <string name="hours_invalid.message">Enter valid working hours.</string>
+
+
+    <!-- Dialog Messages -->
+    <string name="alarm_permission.message">
+        ScrumBoard Mobile uses alarms and reminders to notify you about story deadlines.
+        Would you like to enable notifications for story deadlines?
+    </string>
+
 
 </resources>

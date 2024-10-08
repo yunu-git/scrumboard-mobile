@@ -1,5 +1,10 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.story
 
+import android.app.AlarmManager
+import android.app.AlertDialog
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -41,6 +46,25 @@ fun CreateStoryScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java)
+            if (alarmManager?.canScheduleExactAlarms() == false) {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage(ContextCompat.getString(context, R.string.alarm_permission_message))
+                    .setCancelable(false)
+                    .setPositiveButton(ContextCompat.getString(context, R.string.enable_label)) { dialog, _ ->
+                        Intent().also { intent ->
+                            intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                            context.startActivity(intent)
+                        }
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(ContextCompat.getString(context, R.string.cancel_label)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+
+            }
+        }
         Text(
             text = ContextCompat.getString(context, R.string.create_a_story_label),
             style = MaterialTheme.typography.headlineLarge

@@ -40,12 +40,15 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Task
+import nz.ac.canterbury.seng303.scrumboardmobile.util.convertTimestampToReadableTime
 
 
 @Composable
@@ -86,8 +89,16 @@ fun ViewStoryScreen(
                         )
                         Text(
                             text = storyWithTasks.story.description,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Start
+                        )
+                        Text(
+                            text = "${ContextCompat.getString(context, R.string.due_at)}: ${convertTimestampToReadableTime(storyWithTasks.story.dueAt)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Normal
                         )
                     }
 
