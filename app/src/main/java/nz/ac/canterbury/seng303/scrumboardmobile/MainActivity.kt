@@ -38,6 +38,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -82,6 +83,8 @@ class MainActivity : ComponentActivity() {
 
     private val AUTHENTICATION = booleanPreferencesKey("authentication")
 
+    private val CURRENT_USER = intPreferencesKey("userId")
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -94,6 +97,16 @@ class MainActivity : ComponentActivity() {
                 preferences[AUTHENTICATION] ?: false
             }
 
+        val currentUserId: Flow<Int> = dataStore.data
+            .map { preferences ->
+                preferences[CURRENT_USER] ?: -1
+            }
+
+        suspend fun editCurrentUser(userId:Int) {
+            dataStore.edit { settings ->
+                settings[CURRENT_USER] = userId
+            }
+        }
 
         suspend fun grantAuthentication() {
             dataStore.edit { settings ->
@@ -150,10 +163,12 @@ class MainActivity : ComponentActivity() {
                             composable("Home") {
                                 Home(navController = navController,
                                     isAuth = isAuth,
-                                    removeAuthenticationFn = { removeAuthentication()})
-                            }
+                                    removeAuthenticationFn = { removeAuthentication()},
+                                    editCurrentUser = {userId -> editCurrentUser(userId)}
+                            ) }
                             composable("Register") {
                                 RegisterUserScreen(
+                                    userViewModel = userViewModel,
                                     navController = navController,
                                     username = createUserViewModel.username,
                                     onUsernameChange = { newUsername ->
@@ -179,7 +194,8 @@ class MainActivity : ComponentActivity() {
                                             lastName
                                         )
                                     },
-                                    grantAuthentication = { grantAuthentication() }
+                                    grantAuthentication = { grantAuthentication() },
+                                    editCurrentUser = {userId -> editCurrentUser(userId)}
                                 )
                             }
                             composable("Login") {
@@ -194,7 +210,8 @@ class MainActivity : ComponentActivity() {
                                     onPasswordChange = { newPassword ->
                                         userLoginModel.updatePassword(newPassword)
                                     },
-                                    grantAuthentication = { grantAuthentication() }
+                                    grantAuthentication = { grantAuthentication() },
+                                    editCurrentUser = {userId -> editCurrentUser(userId)}
                                 )
                             }
 
@@ -295,6 +312,7 @@ class MainActivity : ComponentActivity() {
                                     ViewTaskScreen(
                                         navController = navController,
                                         taskViewModel = taskViewModel,
+                                        userViewModel = userViewModel,
                                         storyId = storyId,
                                         taskId = taskId
                                     )
@@ -310,15 +328,15 @@ class MainActivity : ComponentActivity() {
                             ) { backStackEntry ->
                                 val storyId = backStackEntry.arguments?.getString("storyId")
                                 val taskId = backStackEntry.arguments?.getString("taskId")
+                                val currentUserIdState by currentUserId.collectAsState(initial = -1)
 
                                 if (storyId != null && taskId != null) {
                                     CreateWorkLogScreen(
+                                        currentUserId = currentUserIdState,
                                         navController = navController,
                                         createWorkLogViewModel = createWorkLogViewModel,
                                         workLogViewModel = workLogViewModel,
-                                        taskId = taskId.toInt(),
-                                        createdById = 1 //TODO : We need to insert the current user ID HERE
-
+                                        taskId = taskId.toInt()
                                     )
                                 }
                             }
@@ -339,7 +357,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Home(navController: NavController,
          isAuth: Flow<Boolean>,
-         removeAuthenticationFn: suspend () -> Unit
+         removeAuthenticationFn: suspend () -> Unit,
+         editCurrentUser: suspend(Int) -> Unit
          ) {
     val isAuthenticated by isAuth.collectAsState(initial = false)
     val context = LocalContext.current
@@ -368,6 +387,7 @@ fun Home(navController: NavController,
             Button(onClick = {
                 CoroutineScope(Dispatchers.IO).launch {
                     removeAuthenticationFn()
+                    editCurrentUser(-1)
                 }
             }) {
                 Text(ContextCompat.getString(context, R.string.log_out_label))
