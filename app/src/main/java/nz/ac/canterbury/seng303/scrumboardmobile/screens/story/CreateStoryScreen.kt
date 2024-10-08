@@ -63,6 +63,9 @@ fun CreateStoryScreen(
                         dialog.dismiss()
                     }
 
+                val alert = builder.create()
+                alert.show()
+
             }
         }
         Text(
