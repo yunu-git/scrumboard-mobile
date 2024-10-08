@@ -26,12 +26,13 @@ import nz.ac.canterbury.seng303.scrumboardmobile.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateWorkLogScreen(
+    currentUserId: Int,
     navController: NavController,
     createWorkLogViewModel: CreateWorkLogViewModel,
     workLogViewModel: WorkLogViewModel,
     taskId: Int,
-    createdById: Int
 ) {
+    val scope = rememberCoroutineScope()
     var showDatePicker by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -113,15 +114,16 @@ fun CreateWorkLogScreen(
                             Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        workLogViewModel.createWorkLog(
-                            taskId = taskId,
-                            description = createWorkLogViewModel.description,
-                            time = timeMillis,
-                            workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
-                            createdById = createdById
-                        )
-                        createWorkLogViewModel.clearInputs()
-                        navController.popBackStack()
+
+                            workLogViewModel.createWorkLog(
+                                userId = currentUserId,
+                                taskId = taskId,
+                                description = createWorkLogViewModel.description,
+                                time = timeMillis,
+                                workingHours = createWorkLogViewModel.workingHours.toIntOrNull() ?: 0,
+                            )
+                            createWorkLogViewModel.clearInputs()
+                            navController.popBackStack()
                     }
                 }
             },

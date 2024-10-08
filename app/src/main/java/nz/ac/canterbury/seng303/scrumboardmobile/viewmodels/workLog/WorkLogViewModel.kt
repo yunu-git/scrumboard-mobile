@@ -9,15 +9,16 @@ import nz.ac.canterbury.seng303.scrumboardmobile.models.WorkLog
 class WorkLogViewModel(private val workLogDao: WorkLogDao) : ViewModel() {
 
     fun createWorkLog(
+                userId: Int,
                 taskId: Int,
                 description: String,
                 time: Long,
                 workingHours: Int,
-                createdById: Int
     ) {
         viewModelScope.launch {
-            val workLog = WorkLog(0, taskId, description, time, workingHours, createdById)
+            val workLog = WorkLog(0, userId, taskId, description, time, workingHours)
             workLogDao.insertWorkLog(workLog)
         }
     }
+
 }

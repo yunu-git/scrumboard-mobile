@@ -48,6 +48,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +63,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
@@ -77,9 +79,9 @@ import java.util.Locale
 fun ViewTaskScreen(
     navController: NavController,
     taskViewModel: TaskViewModel,
+    userViewModel: UserViewModel,
     storyId: String,
-    taskId: String,
-    userViewModel: UserViewModel
+    taskId: String
 ) {
     taskViewModel.getTaskWithWorkLogs(
         storyId = storyId.toIntOrNull(),
@@ -97,6 +99,7 @@ fun ViewTaskScreen(
     var isDescriptionFocused by remember { mutableStateOf(false) }
 
 
+    val coroutineScope = rememberCoroutineScope()
     var expandedStatus by remember { mutableStateOf(false) }
     var expandedPriority by remember { mutableStateOf(false) }
     var expandedComplexity by remember { mutableStateOf(false) }
@@ -107,6 +110,17 @@ fun ViewTaskScreen(
     var assignedStatus by remember { mutableStateOf<String?>(null) }
     var assignedTo by remember { mutableStateOf<String?>(null) }
     var reviewer by remember { mutableStateOf<String?>(null) }
+    val usernames = remember { mutableStateOf(mutableMapOf<Int, String>()) }
+
+    LaunchedEffect(taskWithWorkLogs) {
+        taskWithWorkLogs?.workLogs?.forEach { workLog ->
+            coroutineScope.launch {
+                val username = userViewModel.getUserById(workLog.userId)?.username ?: "Unknown User"
+                usernames.value = usernames.value.toMutableMap().apply { put(workLog.userId, username) }
+            }
+        }
+    }
+
     val scrollState = rememberScrollState()
 
     var titleChanged by remember { mutableStateOf(false) }
@@ -553,6 +567,7 @@ fun ViewTaskScreen(
                                 )
                             }
 
+
                             // Description
                             Text(workLog.description)
                             Divider(modifier = Modifier.padding(vertical = 8.dp))
@@ -560,7 +575,7 @@ fun ViewTaskScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                Text(text = "${workLog.createdById}")
+                                Text(text = "Added by ${usernames.value[workLog.userId] ?: "Loading..."}")
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
