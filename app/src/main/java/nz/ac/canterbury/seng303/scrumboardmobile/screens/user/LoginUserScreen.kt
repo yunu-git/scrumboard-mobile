@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 
 @Composable
@@ -45,7 +47,7 @@ fun LoginUserScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { onUsernameChange(it) },
-                label = { Text("Username") },
+                label = { Text(ContextCompat.getString(context, R.string.username)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -54,7 +56,7 @@ fun LoginUserScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { onPasswordChange(it) },
-                label = { Text("Password") },
+                label = { Text(ContextCompat.getString(context, R.string.password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,14 +74,16 @@ fun LoginUserScreen(
                             grantAuthentication()
                         } else {
                             if (username.isNotEmpty() && password.isNotEmpty()) {
-                                Toast.makeText(context, "Authentication failed", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,
+                                    ContextCompat.getString(context, R.string.login_failed),
+                                    Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
             ) {
-                Text("Login")
+                Text(ContextCompat.getString(context, R.string.login_label))
             }
         }
     }

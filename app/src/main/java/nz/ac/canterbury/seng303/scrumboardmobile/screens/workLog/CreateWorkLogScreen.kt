@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
@@ -22,6 +23,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLo
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
 import kotlinx.datetime.*
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,7 @@ fun CreateWorkLogScreen(
         OutlinedTextField(
             value = createWorkLogViewModel.description,
             onValueChange = { createWorkLogViewModel.updateDescription(it) },
-            label = { Text("Description") },
+            label = { Text(ContextCompat.getString(context, R.string.description)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
@@ -65,12 +67,12 @@ fun CreateWorkLogScreen(
                 OutlinedTextField(
                     value = createWorkLogViewModel.time.toString(),
                     onValueChange = { },
-                    label = { Text("Date") },
+                    label = { Text(ContextCompat.getString(context, R.string.date)) },
                     readOnly = true,
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "Select date"
+                            contentDescription = ContextCompat.getString(context, R.string.select_date)
                         )
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -91,7 +93,7 @@ fun CreateWorkLogScreen(
                         createWorkLogViewModel.updateWorkingHours(newValue)
                     }
                 },
-                label = { Text("Hours") },
+                label = { Text(ContextCompat.getString(context, R.string.hours)) },
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -105,10 +107,14 @@ fun CreateWorkLogScreen(
 
                 when {
                     createWorkLogViewModel.description.trim().isEmpty() -> {
-                        Toast.makeText(context, "Description cannot be empty", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            ContextCompat.getString(context, R.string.description_empty_message),
+                            Toast.LENGTH_SHORT).show()
                     }
                     createWorkLogViewModel.workingHours.toIntOrNull()?.let { it <= 0 } ?: true -> {
-                        Toast.makeText(context, "Enter valid working hour(s)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            ContextCompat.getString(context, R.string.hours_invalid_message),
+                            Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         currentUser?.let { user ->
@@ -131,7 +137,7 @@ fun CreateWorkLogScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Create Work Log")
+            Text(ContextCompat.getString(context, R.string.create_work_log_label))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -140,7 +146,7 @@ fun CreateWorkLogScreen(
             onClick = { navController.popBackStack() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Cancel")
+            Text(ContextCompat.getString(context, R.string.cancel_label))
         }
     }
 
@@ -160,12 +166,12 @@ fun CreateWorkLogScreen(
                         showDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(ContextCompat.getString(context, R.string.ok_label))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(ContextCompat.getString(context, R.string.cancel_label))
                 }
             }
         ) {
