@@ -50,7 +50,10 @@ class UserViewModel(
         }
         return isAuthenticated
     }
-    suspend fun getUserNameById(userId : Int ): User? {
+    suspend fun getUserById(userId : Int ): User? {
         return userDao.getUserByUserId(userId)
+    }
+    suspend fun getUserByName(username: String): User? {
+        return userDao.findByUsername(username)
     }
 }

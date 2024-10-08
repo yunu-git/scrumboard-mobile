@@ -30,8 +30,9 @@ fun LoginUserScreen(
     onUsernameChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    grantAuthentication: suspend () -> Unit )
-{
+    grantAuthentication: suspend () -> Unit,
+    editCurrentUser: suspend (Int) -> Unit,
+) {
     val context = LocalContext.current
 
     Column(
@@ -72,6 +73,7 @@ fun LoginUserScreen(
                             onPasswordChange("")
                             navController.popBackStack()
                             grantAuthentication()
+                            userViewModel.currentUser.value?.let { editCurrentUser(it.userId) }
                         } else {
                             if (username.isNotEmpty() && password.isNotEmpty()) {
                                 Toast.makeText(context,
