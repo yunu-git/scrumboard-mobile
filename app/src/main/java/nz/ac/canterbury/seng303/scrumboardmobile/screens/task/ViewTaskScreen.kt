@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng303.scrumboardmobile.screens.task
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,11 +15,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -90,6 +94,8 @@ fun ViewTaskScreen(
     var assignedStatus by remember { mutableStateOf<String?>(null) }
     var assignedTo by remember { mutableStateOf<String?>(null) }
     var reviewer by remember { mutableStateOf<String?>(null) }
+    val scrollState = rememberScrollState()
+
 
     LaunchedEffect(taskWithWorkLogs, users) {
         taskWithWorkLogs?.let {
@@ -120,6 +126,7 @@ fun ViewTaskScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .verticalScroll(scrollState)
             ) {
                 // Title
                 OutlinedTextField(
@@ -262,7 +269,6 @@ fun ViewTaskScreen(
                             }
                         }
                     }
-
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
@@ -328,220 +334,122 @@ fun ViewTaskScreen(
                             )
                         }
                     }
+                    Row (
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ }) {
+                            Text(text = ("Save"))
+                        }
+                    }
+                    Row (
+                        modifier = Modifier.padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column (
+                            Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = assignedTo.toString(),
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    label = { Text("Assignee") },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(0.dp)
+                                        .clickable { expandedAssignee = true },
+                                    trailingIcon = {
+                                        IconButton(onClick = { expandedAssignee = true }) {
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Assignee")
+                                        }
+                                    }
+                                )
+
+
+                                DropdownMenu(
+                                    expanded = expandedAssignee,
+                                    onDismissRequest = { expandedAssignee = false }
+                                ) {
+                                    // Iterate through the user values to create dropdown items
+                                    users.forEach { user ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = user.firstName)
+                                            },
+                                            onClick = {
+                                                assignedTo = user.firstName
+                                                val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask)
+                                                expandedAssignee = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        Column (
+                            Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                OutlinedTextField(
+                                    value = reviewer.toString(),
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    label = { Text("Reviewer") },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(0.dp)
+                                        .clickable { expandedReviewer = true },
+                                    trailingIcon = {
+                                        IconButton(onClick = { expandedReviewer = true }) {
+                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Reviewer")
+                                        }
+                                    }
+                                )
+
+
+                                DropdownMenu(
+                                    expanded = expandedReviewer,
+                                    onDismissRequest = { expandedReviewer = false }
+                                ) {
+                                    // Iterate through the user values to create dropdown items
+                                    users.forEach { user ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(text = user.firstName)
+                                            },
+                                            onClick = {
+                                                expandedReviewer = false
+                                                reviewer = user.firstName
+                                                val updatedTask2 = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
+                                                taskViewModel.updateTask(updatedTask2);
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-//                ) {
-//                    // Row to separate content into main details and sidebar
-//                    Row(
-//                        modifier = Modifier.padding(16.dp),
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        // Column for task title and description
-//                        Column(
-//                            modifier = Modifier.weight(3f)
-//                        ) {
-//
-//                            // Description (up to 512 chars)
-//                            Text(
-//                                text = "Description",
-//                                style = MaterialTheme.typography.headlineSmall
-//                            )
-//                            Text(
-//                                text = taskViewModel.taskDescription,
-//                                style = MaterialTheme.typography.bodyMedium
-//                            )
-//                        }
-//
-//                        // Sidebar for status, assignedTo, estimate, priority, complexity
-//                        Column(
-//                            modifier = Modifier
-//                                .weight(2f)
-//                                .wrapContentWidth(),
-//                            verticalArrangement = Arrangement.spacedBy(8.dp)
-//                        ) {
-//                            // Status
-//                            Box(
-//                                modifier = Modifier
-//                                    .padding(vertical = 8.dp)
-//                                    .fillMaxWidth()
-//                            ) {
-//                                OutlinedTextField(
-//                                    value = assignedStatus ?: "",
-//                                    onValueChange = {},
-//                                    readOnly = true,
-//                                    textStyle = TextStyle(fontSize = 12.sp),
-//                                    label = { Text("Task Status") },
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(0.dp)
-//                                        .clickable { expandedStatus = true },
-//                                    trailingIcon = {
-//                                        IconButton(onClick = { expandedStatus = true }) {
-//                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Task Priority")
-//                                        }
-//                                    }
-//                                )
-//
-//
-//                                DropdownMenu(
-//                                    expanded = expandedStatus,
-//                                    onDismissRequest = { expandedStatus = false }
-//                                ) {                    modifier = Modifier.padding(16.dp),
-//                    horizontalArrangement = Arrangement.SpaceBetween
-//                                    // Iterate through the enum values to create dropdown items
-//                                    ScrumboardConstants.Status.entries.forEach { status ->
-//                                        DropdownMenuItem(
-//                                            text = {
-//                                                Text(text = status.status)
-//                                            },
-//                                            onClick = {
-//                                                assignedStatus = status.status
-//                                                val updatedTask = taskWithWorkLogs.task.copy(status = status) // Create a copy of the task with updated status
-//                                                taskViewModel.updateTask(updatedTask)
-//                                                expandedStatus = false
-//                                            }
-//                                        )
-//                                    }
-//                                }
-//                            }
-//
-//                            // Estimate
-//                            Text(
-//                                text = "Estimate: ${taskWithWorkLogs.task.estimate} hours",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                textAlign = TextAlign.End
-//                            )
-//
-//                            // Priority
-//                            Text(
-//                                text = "Priority: ${taskWithWorkLogs.task.priority.priority}",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                textAlign = TextAlign.End
-//                            )
-//
-//                            // Complexity
-//                            Text(
-//                                text = "Complexity: ${taskWithWorkLogs.task.complexity.complexity}",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                textAlign = TextAlign.End
-//                            )
-//                        }
-//                    }
-//                    Row (
-//                        modifier = Modifier
-//                            .padding(8.dp)
-//                            .fillMaxWidth()
-//                    ) {
-//                        Button(
-//                            onClick = { /*TODO*/ }) {
-//                            Text(text = ("Save"))
-//                        }
-//                    }
-//                    Row (
-//                        modifier = Modifier.padding(16.dp),
-//                        horizontalArrangement = Arrangement.SpaceBetween
-//                    ) {
-//                        Column (
-//                            Modifier.weight(1f),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .fillMaxWidth()
-//                            ) {
-//                                OutlinedTextField(
-//                                    value = assignedTo.toString(),
-//                                    onValueChange = {},
-//                                    readOnly = true,
-//                                    textStyle = TextStyle(fontSize = 12.sp),
-//                                    label = { Text("Assignee") },
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(0.dp)
-//                                        .clickable { expandedAssignee = true },
-//                                    trailingIcon = {
-//                                        IconButton(onClick = { expandedAssignee = true }) {
-//                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Assignee")
-//                                        }
-//                                    }
-//                                )
-//
-//
-//                                DropdownMenu(
-//                                    expanded = expandedAssignee,
-//                                    onDismissRequest = { expandedAssignee = false }
-//                                ) {
-//                                    // Iterate through the user values to create dropdown items
-//                                    users.forEach { user ->
-//                                        DropdownMenuItem(
-//                                            text = {
-//                                                Text(text = user.firstName)
-//                                            },
-//                                            onClick = {
-//                                                assignedTo = user.firstName
-//                                                val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
-//                                                taskViewModel.updateTask(updatedTask)
-//                                                expandedAssignee = false
-//                                            }
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        Column (
-//                            Modifier.weight(1f),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .padding(8.dp)
-//                                    .fillMaxWidth()
-//                            ) {
-//                                OutlinedTextField(
-//                                    value = reviewer.toString(),
-//                                    onValueChange = {},
-//                                    readOnly = true,
-//                                    textStyle = TextStyle(fontSize = 12.sp),
-//                                    label = { Text("Reviewer") },
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(0.dp)
-//                                        .clickable { expandedReviewer = true },
-//                                    trailingIcon = {
-//                                        IconButton(onClick = { expandedReviewer = true }) {
-//                                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Reviewer")
-//                                        }
-//                                    }
-//                                )
-//
-//
-//                                DropdownMenu(
-//                                    expanded = expandedReviewer,
-//                                    onDismissRequest = { expandedReviewer = false }
-//                                ) {
-//                                    // Iterate through the user values to create dropdown items
-//                                    users.forEach { user ->
-//                                        DropdownMenuItem(
-//                                            text = {
-//                                                Text(text = user.firstName)
-//                                            },
-//                                            onClick = {
-//                                                expandedReviewer = false
-//                                                reviewer = user.firstName
-//                                                val updatedTask2 = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
-//                                                taskViewModel.updateTask(updatedTask2);
-//                                            }
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
         }
     }
+}
 
 @Composable
 fun ExtendedCreateWorkLogFab(
