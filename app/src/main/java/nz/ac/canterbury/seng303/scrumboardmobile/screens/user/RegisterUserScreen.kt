@@ -11,12 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 
 @Composable
 fun RegisterUserScreen(
@@ -31,12 +34,13 @@ fun RegisterUserScreen(
     onLastNameChange: (String) -> Unit,
     createUserFn: (String, String, String, String) -> Unit,
     grantAuthentication: suspend () -> Unit ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Register for ScrumBoard Mobile")
+        Text(ContextCompat.getString(context, R.string.register_header))
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -45,14 +49,14 @@ fun RegisterUserScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { onUsernameChange(it) },
-                label = { Text("Username") },
+                label = { Text(ContextCompat.getString(context, R.string.username)) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = password,
                 onValueChange = { onPasswordChange(it) },
-                label = { Text("Password") },
+                label = { Text(ContextCompat.getString(context, R.string.password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
@@ -60,14 +64,14 @@ fun RegisterUserScreen(
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { onFirstNameChange(it) },
-                label = { Text("First Name") },
+                label = { Text(ContextCompat.getString(context, R.string.first_name)) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
             OutlinedTextField(
                 value = lastName,
                 onValueChange = { onLastNameChange(it) },
-                label = { Text("Last Name") },
+                label = { Text(ContextCompat.getString(context, R.string.last_name)) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
 
@@ -85,7 +89,7 @@ fun RegisterUserScreen(
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
             ) {
-                Text("Register")
+                Text(ContextCompat.getString(context, R.string.register_label))
             }
         }
     }

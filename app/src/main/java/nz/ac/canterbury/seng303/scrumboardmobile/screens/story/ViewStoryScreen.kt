@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.story
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,12 +37,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.Task
+import nz.ac.canterbury.seng303.scrumboardmobile.util.convertTimestampToReadableTime
 
 
 @Composable
@@ -53,11 +60,15 @@ fun ViewStoryScreen(
     storyViewModel.getStoryWithTasks(storyId = storyId.toIntOrNull())
     val selectedStoryState by storyViewModel.selectedStoryWithTasks.collectAsState(null)
     val storyWithTasks: StoryWithTasks? = selectedStoryState
+    val context = LocalContext.current
 
     if (storyWithTasks != null) {
         Scaffold(
             floatingActionButton = {
-                ExtendedCreateTaskFab(navController = navController, storyId = storyId)
+                ExtendedCreateTaskFab(
+                    navController = navController,
+                    storyId = storyId,
+                    context = context)
             }
         ) { innerPadding ->
             Column(
@@ -78,26 +89,39 @@ fun ViewStoryScreen(
                         )
                         Text(
                             text = storyWithTasks.story.description,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Start
+                        )
+                        Text(
+                            text = "${ContextCompat.getString(context, R.string.due_at)}: ${convertTimestampToReadableTime(storyWithTasks.story.dueAt)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Normal
                         )
                     }
 
                 }
 
 
-                ScrollableStatusCards(navController = navController, storyWithTasks = storyWithTasks)
+                ScrollableStatusCards(
+                    navController = navController,
+                    storyWithTasks = storyWithTasks,
+                    context = context)
             }
         }
     }
 }
 
 @Composable
-fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWithTasks) {
+fun ScrollableStatusCards(navController: NavController,
+                          storyWithTasks: StoryWithTasks,
+                          context: Context) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     var currentStatusIndex by remember { mutableIntStateOf(0) }
-    val cardWidth = remember { mutableStateOf(0) }
+    val cardWidth = remember { mutableIntStateOf(0) }
 
     Column {
         LazyRow(
@@ -105,14 +129,14 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(ScrumboardConstants.Status.entries) { index, status ->
+            itemsIndexed(ScrumboardConstants.Status.entries) { _, status ->
                 ElevatedCard(
                     modifier = Modifier
                         .fillParentMaxHeight(0.7f)
                         .fillParentMaxWidth(0.9f)
                         .padding(8.dp)
                         .onGloballyPositioned { coordinates ->
-                            cardWidth.value = coordinates.size.width
+                            cardWidth.intValue = coordinates.size.width
                         },
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 6.dp
@@ -129,7 +153,8 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
                         TaskList(
                             navController = navController,
                             tasks =  storyWithTasks.tasks,
-                            status = status
+                            status = status,
+                            context = context
                         )
                     }
                 }
@@ -148,16 +173,17 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
                     coroutineScope.launch {
                         listState.animateScrollToItem(newIndex)
                     }
-                }
+                },
+                context = context
             )
         }
     }
 
-    LaunchedEffect(listState, cardWidth.value) {
+    LaunchedEffect(listState, cardWidth.intValue) {
         snapshotFlow {
             val firstVisibleItemIndex = listState.firstVisibleItemIndex
             val firstVisibleItemScrollOffset = listState.firstVisibleItemScrollOffset
-            val halfCardWidth = cardWidth.value / 2
+            val halfCardWidth = cardWidth.intValue / 2
 
             when {
                 firstVisibleItemScrollOffset > halfCardWidth -> firstVisibleItemIndex + 1
@@ -171,18 +197,22 @@ fun ScrollableStatusCards(navController: NavController, storyWithTasks: StoryWit
 }
 
 @Composable
-fun ExtendedCreateTaskFab(navController: NavController, storyId: String) {
+fun ExtendedCreateTaskFab(navController: NavController,
+                          storyId: String,
+                          context: Context
+) {
     ExtendedFloatingActionButton(
         onClick = { navController.navigate("Story/$storyId/CreateTask") },
-        text = { Text(text = "Add Task") },
-        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task") }
+        text = { Text(text = ContextCompat.getString(context, R.string.add_task_label)) },
+        icon = { Icon(imageVector = Icons.Default.Add, contentDescription = ContextCompat.getString(context, R.string.add_task_label)) }
     )
 }
 
 @Composable
 fun PaginatedStatusButtons(
     currentStatusIndex: Int,
-    onStatusChange: (Int) -> Unit
+    onStatusChange: (Int) -> Unit,
+    context: Context
 ) {
     val statuses = ScrumboardConstants.Status.entries
 
@@ -202,7 +232,7 @@ fun PaginatedStatusButtons(
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Previous Status",
+                contentDescription = ContextCompat.getString(context, R.string.prev_status),
                 tint = if (currentStatusIndex > 0) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f)
             )
         }
@@ -222,7 +252,7 @@ fun PaginatedStatusButtons(
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Next Status",
+                contentDescription = ContextCompat.getString(context, R.string.next_status),
                 tint = if (currentStatusIndex < statuses.size - 1) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f)
 
             )
@@ -234,7 +264,8 @@ fun PaginatedStatusButtons(
 fun TaskList(
     navController: NavController,
     status: ScrumboardConstants.Status,
-    tasks: List<Task>
+    tasks: List<Task>,
+    context: Context
 ) {
     val filteredTasks = tasks.filter { it.status == status }
     Column(
@@ -261,7 +292,7 @@ fun TaskList(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "No tasks in this status.",
+                    text = ContextCompat.getString(context, R.string.no_tasks_message),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

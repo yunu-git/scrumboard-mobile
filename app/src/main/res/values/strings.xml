@@ -1,3 +1,117 @@
 <resources>
     <string name="app_name">ScrumBoard Mobile</string>
+    <string name="welcome">Welcome to ScrumBoard</string>
+
+    <!-- Button Labels -->
+    <string name="view_stories.label">View Stories</string>
+    <string name="create_a_story.label">Create a Story</string>
+    <string name="log_out.label">Log Out</string>
+    <string name="add_task.label">Add Task</string>
+    <string name="create_task.label">Create Task</string>
+    <string name="create_a_task.label">Create a Task</string>
+    <string name="create_work_log.label">Add Work Log</string>
+    <string name="create.label">Create</string>
+    <string name="create_story.label">Create Story</string>
+    <string name="ok.label">OK</string>
+    <string name="cancel.label">Cancel</string>
+    <string name="login.label">Log In</string>
+    <string name="register.label">Register</string>
+    <string name="enable.label">Enable</string>
+    <string name="back.label">Back</string>
+
+
+
+    <!-- Headers -->
+    <string name="stories">Stories</string>
+
+
+    <!-- Shared Components -->
+    <string name="unset">Unset</string>
+    <string name="description">Description</string>
+    <string name="estimate">Estimate</string>
+    <string name="priority">Priority</string>
+    <string name="complexity">Complexity</string>
+
+    <!-- Statuses -->
+    <string name="todo">To Do</string>
+    <string name="in_progress">In Progress</string>
+    <string name="review">Review</string>
+    <string name="in_review">In Review</string>
+    <string name="done">Done</string>
+
+    <!-- Complexity -->
+    <string name="low_complexity">Low</string>
+    <string name="medium_complexity">Medium</string>
+    <string name="high_complexity">High</string>
+
+    <!-- Messages -->
+    <string name="no_tasks.message">No tasks in this status.</string>
+
+
+    <!-- Notifications -->
+    <string name="notification_title">ScrumBoard: Deadline Reminder</string>
+    <string name="notification_message">Notification Message</string>
+    <string name="story_due_message">%1$s is due now.</string>
+
+    <!-- Login / Register -->
+    <string name="register_header">Register for ScrumBoard Mobile</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+
+    <string name="login_failed">Failed to log in.</string>
+
+
+    <!-- Create Story -->
+    <string name="story_title">Story Title</string>
+    <string name="story_description">Story Description</string>
+
+    <string name="story_datetime_helper.message">
+        You will be sent a reminder at this date and time.
+    </string>
+
+    <string name="story_due_date">Due Date</string>
+    <string name="story_due_time">Due Time</string>
+    <string name="due_at">Due at</string>
+
+    <!-- View Stories -->
+    <string name="no_stories_available_1">No stories available.</string>
+    <string name="no_stories_available_2">You can create some here.</string>
+
+    <!-- View Story -->
+    <string name="prev_status">Previous Status</string>
+    <string name="next_status">Next Status</string>
+
+    <!-- Create Task -->
+    <string name="task_title">Task Title</string>
+    <string name="task_description">Task Description</string>
+    <string name="task_priority">Task Priority</string>
+    <string name="task_complexity">Task Complexity</string>
+    <string name="task_estimate">Task Estimate</string>
+
+    <!-- Create Task Validation Messages -->
+    <string name="title_empty.message">Title cannot be empty.</string>
+    <string name="description_empty.message">Description cannot be empty.</string>
+    <string name="priority_unset.message">Priority cannot be unset.</string>
+    <string name="complexity_unset.message">Complexity cannot be unset.</string>
+    <string name="estimate_empty.message">Estimate cannot be empty.</string>
+    <string name="estimate_negative.message">Estimate must be a positive integer.</string>
+
+    <!-- Create Work Log -->
+    <string name="date">Date</string>
+    <string name="select_date">Select Date</string>
+    <string name="hours">Hours</string>
+
+    <!-- Create Work Log Validation Messages -->
+    <string name="hours_invalid.message">Enter valid working hours.</string>
+
+
+    <!-- Dialog Messages -->
+    <string name="alarm_permission.message">
+        ScrumBoard Mobile uses alarms and reminders to notify you about story deadlines.
+        Would you like to enable notifications for story deadlines?
+    </string>
+
+
 </resources>

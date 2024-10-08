@@ -83,4 +83,6 @@ dependencies {
     // Updated Koin dependencies
     implementation("io.insert-koin:koin-android:$koin_version")
     implementation("io.insert-koin:koin-androidx-compose:$koin_version")
+
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 }

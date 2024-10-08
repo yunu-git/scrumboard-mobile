@@ -1,9 +1,14 @@
 package nz.ac.canterbury.seng303.scrumboardmobile
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,10 +24,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -73,8 +84,7 @@ class MainActivity : ComponentActivity() {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-
-
+    @RequiresApi(Build.VERSION_CODES.S)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,13 +213,18 @@ class MainActivity : ComponentActivity() {
                                     onDescriptionChange = { newDescription ->
                                         createStoryViewModel.updateDescription(newDescription)
                                     },
-                                    createStoryFn = { title, description,timeCreated  ->
+                                    dateTime = createStoryViewModel.dueAt,
+                                    onDateTimeChange = { newDate -> createStoryViewModel.updateDueAt(newDate)},
+
+                                    createStoryFn = { title, description, timeCreated, date  ->
                                         storyViewModel.createStory(
                                             title,
                                             description,
-                                            timeCreated
+                                            timeCreated,
+                                            date
                                         )
-                                    }
+                                    },
+                                    clearFields = { createStoryViewModel.clearFields() }
                                 )
                             }
 
@@ -327,34 +342,70 @@ fun Home(navController: NavController,
          removeAuthenticationFn: suspend () -> Unit
          ) {
     val isAuthenticated by isAuth.collectAsState(initial = false)
+    val context = LocalContext.current
+    NotificationPermissionHandler(context = context)
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to ScrumBoard")
+        Text(ContextCompat.getString(context, R.string.welcome))
         if (!isAuthenticated) {
             Button(onClick = { navController.navigate("Register") }) {
-                Text("Register")
+                Text(ContextCompat.getString(context, R.string.register_label))
             }
 
             Button(onClick = { navController.navigate("Login") }) {
-                Text("Log in")
+                Text(ContextCompat.getString(context, R.string.login_label))
             }
         } else {
             Button(onClick = { navController.navigate("AllStories") }) {
-                Text("View Stories")
+                Text(ContextCompat.getString(context, R.string.view_stories_label))
             }
             Button(onClick = { navController.navigate("CreateStory") }) {
-                Text("Create a Story")
+                Text(ContextCompat.getString(context, R.string.create_story_label))
             }
             Button(onClick = {
                 CoroutineScope(Dispatchers.IO).launch {
                     removeAuthenticationFn()
                 }
             }) {
-                Text(text = "Log out")
+                Text(ContextCompat.getString(context, R.string.log_out_label))
             }
         }
+    }
+}
+
+
+@Composable
+fun NotificationPermissionHandler(context: Context) {
+    var hasNotificationPermission by remember {
+        mutableStateOf(checkNotificationPermission(context))
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasNotificationPermission = isGranted
+        }
+    )
+
+    DisposableEffect(key1 = permissionLauncher) {
+        if (!hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch("android.permission.POST_NOTIFICATIONS")
+        }
+        onDispose { }
+    }
+}
+
+private fun checkNotificationPermission(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            context,
+            "android.permission.POST_NOTIFICATIONS"
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        // For versions below Android 13, notifications are enabled by default
+        true
     }
 }
