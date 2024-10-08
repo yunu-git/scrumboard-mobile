@@ -314,7 +314,6 @@ class MainActivity : ComponentActivity() {
                                         userViewModel = userViewModel,
                                         storyId = storyId,
                                         taskId = taskId,
-                                        userViewModel = userViewModel
                                     )
                                 }
                             }
