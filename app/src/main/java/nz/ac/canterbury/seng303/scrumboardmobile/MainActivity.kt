@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.CreateStoryScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.EditStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewAllStories
@@ -65,6 +66,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.util.hashPassword
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.EditStoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.CreateTaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
@@ -155,6 +157,8 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(it)) {
                         val createUserViewModel: CreateUserViewModel = viewModel()
                         val createStoryViewModel: CreateStoryViewModel = viewModel()
+                        val editStoryViewModel: EditStoryViewModel = viewModel()
+
                         val createTaskViewModel: CreateTaskViewModel = viewModel()
                         val createWorkLogViewModel: CreateWorkLogViewModel = viewModel()
                         val userLoginModel: UserLoginModel = viewModel()
@@ -245,6 +249,34 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            composable("Story/{storyId}/edit", arguments = listOf(navArgument("storyId") {
+                                type = NavType.StringType
+                            })) { backStackEntry ->
+                            val storyId = backStackEntry.arguments?.getString("storyId")
+                            storyId?.let { storyIdParam: String ->
+                                EditStoryScreen(
+                                    navController = navController,
+                                    storyViewModel = storyViewModel,
+                                    storyId = storyIdParam,
+                                    title = editStoryViewModel.title,
+                                    onTitleChange = { newTitle ->
+                                        editStoryViewModel.updateTitle(newTitle)
+                                    },
+                                    description = editStoryViewModel.description,
+                                    onDescriptionChange = { newDescription ->
+                                        editStoryViewModel.updateDescription(newDescription)
+                                    },
+                                    dateTime = editStoryViewModel.dueAt,
+                                    onDateTimeChange = { newDate -> editStoryViewModel.updateDueAt(newDate)},
+
+                                    clearFields = { editStoryViewModel.clearFields() },
+                                    populateFields = { story -> editStoryViewModel.setDefaultValues(story)}
+                                )
+                            }
+
+                        }
+
+
                             composable("Story/{storyId}", arguments = listOf(navArgument("storyId") {
                                 type = NavType.StringType
                             })) { backStackEntry ->
@@ -294,7 +326,8 @@ class MainActivity : ComponentActivity() {
                                                 estimate,
                                                 storyIdParam.toInt()
                                             )
-                                        }
+                                        },
+                                        storyId = storyId
                                     )
                                 }
                             }
