@@ -89,7 +89,7 @@ class StoryViewModel (private val storyDao: StoryDao, private val context: Conte
     }
 
     private fun scheduleNotifications(message: String, scheduleDate: LocalDateTime) {
-        val requestId = 1
+        val requestId = System.currentTimeMillis().toInt()
         val intent = Intent(context.applicationContext, NotificationReceiver::class.java).apply {
             val bundle = bundleOf(
                 Pair("notificationTitle", context.getString(R.string.notification_title)),
