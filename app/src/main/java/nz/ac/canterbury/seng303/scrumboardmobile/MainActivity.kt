@@ -269,7 +269,6 @@ class MainActivity : ComponentActivity() {
                                             createTaskViewModel.updateTitle(newTitle)
                                         },
                                         description = createTaskViewModel.description,
-
                                         onDescriptionChange = { newDescription ->
                                             createTaskViewModel.updateDescription(newDescription)
                                         },
@@ -314,7 +313,7 @@ class MainActivity : ComponentActivity() {
                                         taskViewModel = taskViewModel,
                                         userViewModel = userViewModel,
                                         storyId = storyId,
-                                        taskId = taskId
+                                        taskId = taskId,
                                     )
                                 }
                             }
