@@ -74,7 +74,10 @@ class StoryViewModel (private val storyDao: StoryDao, private val context: Conte
         try {
             val storyId = storyDao.insertStory(story)
             Log.d("STORY_VIEW_MODEL", "Story has been created with id: $storyId")
-            scheduleNotifications(context.getString(R.string.story_due_message, title), dueAt)
+            if (dueAt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds() >= System.currentTimeMillis()){
+                scheduleNotifications(context.getString(R.string.story_due_message, title), dueAt)
+
+            }
         } catch (e: Exception) {
             Log.e("STORY_VIEW_MODEL", "Could not insert Story", e)
         }

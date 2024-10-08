@@ -165,8 +165,9 @@ fun CreateStoryScreen(
                 onClick = {
                     timeCreated.longValue = System.currentTimeMillis()
                     createStoryFn(title, description, timeCreated.longValue, dateTime)
-                    clearFields()
                     navController.navigate("AllStories")
+
+                    clearFields()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
