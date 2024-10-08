@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.task
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -18,8 +20,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -54,13 +54,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import nz.ac.canterbury.seng303.scrumboardmobile.R
 import nz.ac.canterbury.seng303.scrumboardmobile.models.ScrumboardConstants
 import nz.ac.canterbury.seng303.scrumboardmobile.models.TaskWithWorkLogs
 import nz.ac.canterbury.seng303.scrumboardmobile.models.User
@@ -107,6 +109,15 @@ fun ViewTaskScreen(
     var reviewer by remember { mutableStateOf<String?>(null) }
     val scrollState = rememberScrollState()
 
+    var titleChanged by remember { mutableStateOf(false) }
+    var descriptionChanged by remember { mutableStateOf(false) }
+    var statusChanged by remember { mutableStateOf(false) }
+    var estimateChanged by remember { mutableStateOf(false) }
+    var priorityChanged by remember { mutableStateOf(false) }
+    var complexityChanged by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
 
     LaunchedEffect(taskWithWorkLogs, users) {
         taskWithWorkLogs?.let {
@@ -144,6 +155,7 @@ fun ViewTaskScreen(
                     value = taskViewModel.taskTitle,
                     onValueChange = { newTitle ->
                         taskViewModel.updateTaskTittle(newTitle)
+                        titleChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.title != newTitle
                     },
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -180,6 +192,8 @@ fun ViewTaskScreen(
                             value = taskViewModel.taskDescription,
                             onValueChange = { newDescription ->
                                 taskViewModel.updateTaskDescription(newDescription)
+                                descriptionChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.description != newDescription
+
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -193,7 +207,6 @@ fun ViewTaskScreen(
                                 unfocusedContainerColor = Color.Transparent
                             ),
                             textStyle = MaterialTheme.typography.bodyMedium,
-                            placeholder = { Text("Enter task description") }, // Optional placeholder
                         )
                     }
                     Row(
@@ -201,7 +214,8 @@ fun ViewTaskScreen(
                     ){
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.CenterEnd
                         ) {
                             OutlinedTextField(
                                 value = taskViewModel.status.status,
@@ -222,7 +236,9 @@ fun ViewTaskScreen(
                             )
                             DropdownMenu(
                                 expanded = expandedStatus,
-                                onDismissRequest = { expandedStatus = false }
+                                onDismissRequest = { expandedStatus = false },
+                                offset = DpOffset(x = 180.dp, y = 0.dp),
+                                modifier = Modifier.width(150.dp)
                             ) {
                                 ScrumboardConstants.Status.entries.forEach { status ->
                                     DropdownMenuItem(
@@ -231,6 +247,7 @@ fun ViewTaskScreen(
                                         },
                                         onClick = {
                                             taskViewModel.updateStatus(status)
+                                            statusChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.status != status
                                             expandedStatus = false
                                         }
                                     )
@@ -242,7 +259,7 @@ fun ViewTaskScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Column {
-                            Text(text = "Priority")
+                            Text(text = ContextCompat.getString(context, R.string.priority))
                         }
                         Spacer(modifier = Modifier.width(160.dp))
                         Column {
@@ -273,6 +290,7 @@ fun ViewTaskScreen(
                                         },
                                         onClick = {
                                             taskViewModel.updatePriority(priority)
+                                            priorityChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.priority != priority
                                             expandedPriority = false
                                         }
                                     )
@@ -284,7 +302,7 @@ fun ViewTaskScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Column {
-                            Text(text = "Complexity")
+                            Text(text = ContextCompat.getString(context, R.string.complexity))
                         }
                         Spacer(modifier = Modifier.width(130.dp))
                         Column {
@@ -315,6 +333,7 @@ fun ViewTaskScreen(
                                         },
                                         onClick = {
                                             taskViewModel.updateComplexity(complexity)
+                                            complexityChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.complexity != complexity
                                             expandedComplexity = false
                                         }
                                     )
@@ -326,7 +345,7 @@ fun ViewTaskScreen(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Column {
-                            Text(text = "Estimate")
+                            Text(text = ContextCompat.getString(context, R.string.estimate))
                         }
                         Spacer(modifier = Modifier.width(130.dp))
                         Column {
@@ -334,6 +353,7 @@ fun ViewTaskScreen(
                                 value = taskViewModel.estimate,
                                 onValueChange = { newEstimate ->
                                     taskViewModel.updateEstimate(newEstimate)
+                                    estimateChanged = taskViewModel.selectedTaskWithWorkLogs.value?.task?.estimate.toString() != newEstimate
                                 },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Number
@@ -345,18 +365,58 @@ fun ViewTaskScreen(
                             )
                         }
                     }
-                    Row (
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Button(
-                            onClick = { /*TODO*/ }) {
-                            Text(text = ("Save"))
+                    if (titleChanged || descriptionChanged || statusChanged ||
+                        estimateChanged || priorityChanged || complexityChanged) {
+                        Row(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Button(
+                                onClick = {
+                                    when {
+                                        taskViewModel.taskTitle.trim().isEmpty() -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.title_empty_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        taskViewModel.taskDescription.trim().isEmpty() -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.description_empty_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        taskViewModel.priority == ScrumboardConstants.Priority.UNSET -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.priority_unset_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        taskViewModel.complexity == ScrumboardConstants.Complexity.UNSET -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.complexity_unset_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        taskViewModel.estimate == "" -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.estimate_empty_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        taskViewModel.estimate.toInt() <= 0 -> {
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.estimate_negative_message), Toast.LENGTH_SHORT).show()
+                                        }
+                                        else -> {
+                                            taskViewModel.updateTaskFromState()
+                                            Toast.makeText(context, ContextCompat.getString(context, R.string.task_updated), Toast.LENGTH_SHORT).show()
+                                            titleChanged = false
+                                            descriptionChanged = false
+                                            statusChanged = false
+                                            estimateChanged = false
+                                            priorityChanged = false
+                                            complexityChanged = false
+                                        }
+                                    }
+                                }) {
+                                Text(text = (ContextCompat.getString(context, R.string.save_label)))
+                            }
                         }
                     }
                     Row (
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier
+                            .padding(
+                                start = 4.dp,
+                                top = 4.dp,
+                                end = 4.dp,
+                                bottom = 16.dp
+                            ),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column (
@@ -365,7 +425,6 @@ fun ViewTaskScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
                                     .fillMaxWidth()
                             ) {
                                 OutlinedTextField(
@@ -373,7 +432,7 @@ fun ViewTaskScreen(
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
-                                    label = { Text("Assignee") },
+                                    label = { Text(ContextCompat.getString(context, R.string.assignee)) },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(0.dp)
@@ -384,8 +443,6 @@ fun ViewTaskScreen(
                                         }
                                     }
                                 )
-
-
                                 DropdownMenu(
                                     expanded = expandedAssignee,
                                     onDismissRequest = { expandedAssignee = false }
@@ -413,7 +470,7 @@ fun ViewTaskScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
+                                    .padding(horizontal = 8.dp)
                                     .fillMaxWidth()
                             ) {
                                 OutlinedTextField(
@@ -421,7 +478,7 @@ fun ViewTaskScreen(
                                     onValueChange = {},
                                     readOnly = true,
                                     textStyle = TextStyle(fontSize = 12.sp),
-                                    label = { Text("Reviewer") },
+                                    label = { Text(ContextCompat.getString(context, R.string.reviewer)) },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(0.dp)
@@ -432,8 +489,6 @@ fun ViewTaskScreen(
                                         }
                                     }
                                 )
-
-
                                 DropdownMenu(
                                     expanded = expandedReviewer,
                                     onDismissRequest = { expandedReviewer = false }
@@ -447,8 +502,8 @@ fun ViewTaskScreen(
                                             onClick = {
                                                 expandedReviewer = false
                                                 reviewer = user.firstName
-                                                val updatedTask2 = taskWithWorkLogs.task.copy(reviewerId = user.userId) // Create a copy of the task with updated status
-                                                taskViewModel.updateTask(updatedTask2);
+                                                val updatedTask2 = taskWithWorkLogs.task.copy(reviewerId = user.userId)
+                                                taskViewModel.updateTask(updatedTask2)
                                             }
                                         )
                                     }
@@ -457,11 +512,10 @@ fun ViewTaskScreen(
                         }
                     }
                 }
-
                 // Display work logs
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Work Logs",
+                    text = ContextCompat.getString(context, R.string.worklogs),
                     style = MaterialTheme.typography.headlineMedium
                 )
                 taskWithWorkLogs.workLogs.forEach { workLog ->

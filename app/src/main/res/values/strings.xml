@@ -18,11 +18,13 @@
     <string name="register.label">Register</string>
     <string name="enable.label">Enable</string>
     <string name="back.label">Back</string>
+    <string name="save.label">Save</string>
 
 
 
     <!-- Headers -->
     <string name="stories">Stories</string>
+    <string name="worklogs">Work Logs</string>
 
 
     <!-- Shared Components -->
@@ -97,6 +99,11 @@
     <string name="complexity_unset.message">Complexity cannot be unset.</string>
     <string name="estimate_empty.message">Estimate cannot be empty.</string>
     <string name="estimate_negative.message">Estimate must be a positive integer.</string>
+
+    <!-- View task -->
+    <string name="assignee">Assignee</string>
+    <string name="reviewer">Reviewer</string>
+    <string name="task_updated">Task Updated</string>
 
     <!-- Create Work Log -->
     <string name="date">Date</string>

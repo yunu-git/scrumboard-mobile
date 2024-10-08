@@ -74,6 +74,29 @@ class TaskViewModel (private val taskDao: TaskDao): ViewModel() {
         }
     }
 
+    fun updateTaskFromState() = viewModelScope.launch {
+        val taskWithWorkLogs = selectedTaskWithWorkLogs.value
+        if (taskWithWorkLogs != null) {
+            val updatedTask = taskWithWorkLogs.task.copy(
+                title = taskTitle,
+                description = taskDescription,
+                status = status,
+                estimate = estimate.toIntOrNull() ?: 0, // Ensure estimate is an integer
+                priority = priority,
+                complexity = complexity
+            )
+            try {
+                taskDao.updateTask(updatedTask)
+                Log.d("TASK_VIEW_MODEL", "Task updated successfully")
+                _selectedTaskWithWorkLogs.value = taskWithWorkLogs.copy(task = updatedTask)
+            } catch (e: Exception) {
+                Log.e("TASK_VIEW_MODEL", "Error updating task", e)
+            }
+        } else {
+            Log.w("TASK_VIEW_MODEL", "No task selected for updating")
+        }
+    }
+
     fun createTask(title: String,
                     description: String,
                     complexity: ScrumboardConstants.Complexity,
