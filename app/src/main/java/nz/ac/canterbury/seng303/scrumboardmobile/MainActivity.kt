@@ -67,6 +67,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.EditTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.LoginUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserProfileScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.CreateWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.EditWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
@@ -161,7 +162,7 @@ class MainActivity : ComponentActivity() {
                                 Icon(Icons.Default.Add, contentDescription = "Create Story", modifier = Modifier.size(48.dp))
                             }
                             IconButton(onClick = {
-                                navController.navigate("AllStories")
+                                navController.navigate("Profile")
                             }) {
                                 Icon(Icons.Default.Person, contentDescription = "Profile", modifier = Modifier.size(48.dp))
                             }
@@ -432,6 +433,13 @@ class MainActivity : ComponentActivity() {
                                         workLogViewModel = workLogViewModel,
                                     )
                                 }
+                            }
+                            composable("Profile") {
+                                val currentUserIdState by currentUserId.collectAsState(initial = -1)
+                                UserProfileScreen(navController = navController,
+                                    userViewModel = userViewModel,
+                                    currentUserId = currentUserIdState
+                                )
                             }
                         }
                     }

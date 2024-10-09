@@ -33,6 +33,7 @@
     <!-- Headers -->
     <string name="stories">Stories</string>
     <string name="worklogs">Work Logs</string>
+    <string name="name">Name</string>
 
 
     <!-- Shared Components -->
@@ -134,8 +135,6 @@
     <string name="num_hours">%1$dh</string>
     <string name="no_one">No One</string>
 
-
-
     <!-- Create Work Log Validation Messages -->
     <string name="hours_invalid.message">Enter valid working hours.</string>
 
@@ -146,5 +145,8 @@
         Would you like to enable notifications for story deadlines?
     </string>
 
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="change_preference">Change Preference </string>
 
 </resources>

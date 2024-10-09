@@ -56,4 +56,7 @@ class UserViewModel(
     suspend fun getUserByName(username: String): User? {
         return userDao.findByUsername(username)
     }
+    suspend fun setCurrentUser(userId: Int) {
+        _currentUser.value = getUserById(userId)
+    }
 }
