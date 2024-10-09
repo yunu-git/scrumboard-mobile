@@ -201,8 +201,8 @@ class MainActivity : ComponentActivity() {
                                     onUsernameChange = { newUsername ->
                                         createUserViewModel.updateUsername(newUsername)
                                     },
-                                    email = createUserViewModel.email,
-                                    onEmailChange = { newEmail ->
+                                    userEmail  = createUserViewModel.email,
+                                    onUserEmailChange = { newEmail ->
                                         createUserViewModel.updateEmail(newEmail)
                                     },
                                     password = createUserViewModel.password,
@@ -458,6 +458,7 @@ class MainActivity : ComponentActivity() {
                                     currentUserId = currentUserIdState
                                 )
                             }
+
                         }
                     }
                 }
