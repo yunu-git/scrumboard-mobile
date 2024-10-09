@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.task
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -472,6 +474,14 @@ fun ViewTaskScreen(
                                                 val updatedTask = taskWithWorkLogs.task.copy(assignedTo = user.userId) // Create a copy of the task with updated status
                                                 taskViewModel.updateTask(updatedTask)
                                                 expandedAssignee = false
+
+                                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                                    data = Uri.parse("mailto:")
+                                                    putExtra(Intent.EXTRA_EMAIL, arrayOf(user.username))
+                                                    putExtra(Intent.EXTRA_SUBJECT, "You Have Been Assigned To '${taskWithWorkLogs.task.title}'") // Email subject
+                                                    putExtra(Intent.EXTRA_TEXT, "I have assigned you to a Scrumboard Mobile task: '${taskWithWorkLogs.task.title}'") // Email body
+                                                }
+                                                context.startActivity(intent)
                                             }
                                         )
                                     }
