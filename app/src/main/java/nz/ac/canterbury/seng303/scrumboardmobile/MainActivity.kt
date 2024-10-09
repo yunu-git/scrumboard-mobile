@@ -198,6 +198,10 @@ class MainActivity : ComponentActivity() {
                                     onUsernameChange = { newUsername ->
                                         createUserViewModel.updateUsername(newUsername)
                                     },
+                                    email = createUserViewModel.email,
+                                    onEmailChange = { newEmail ->
+                                        createUserViewModel.updateEmail(newEmail)
+                                    },
                                     password = createUserViewModel.password,
                                     onPasswordChange = { newPassword ->
                                         createUserViewModel.updatePassword(newPassword)
@@ -210,9 +214,10 @@ class MainActivity : ComponentActivity() {
                                     onLastNameChange = { newLastName ->
                                         createUserViewModel.updateLastName(newLastName)
                                     },
-                                    createUserFn = { username, password, firstName, lastName ->
+                                    createUserFn = { username, email, password, firstName, lastName ->
                                         userViewModel.createUser(
                                             username,
+                                            email,
                                             hashPassword(password),
                                             firstName,
                                             lastName

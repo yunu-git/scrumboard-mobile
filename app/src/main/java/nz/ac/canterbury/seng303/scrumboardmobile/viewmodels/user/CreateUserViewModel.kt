@@ -11,6 +11,11 @@ class CreateUserViewModel: ViewModel() {
     fun updateUsername(newUsername: String) {
         username = newUsername
     }
+    var email by mutableStateOf("")
+        private set
+    fun updateEmail(newEmail: String) {
+        email = newEmail
+    }
     var password by mutableStateOf("")
     fun updatePassword(newPassword: String) {
         password = newPassword

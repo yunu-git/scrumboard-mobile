@@ -24,11 +24,13 @@ class UserViewModel(
     val currentUser: StateFlow<User?> = _currentUser
 
     fun createUser(username: String,
+                   email: String,
                    password: String,
                    firstName: String,
                    lastName: String) = viewModelScope.launch {
         val user = User(
             username = username,
+            email = email,
             password = password,
             firstName = firstName,
             lastName = lastName

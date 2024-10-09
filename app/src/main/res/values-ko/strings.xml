@@ -139,5 +139,6 @@
     <!-- Profile -->
     <string name="profile">프로필</string>
     <string name="change_preference">선호도 변경</string>
+    <string name="email">이메일</string>
 
 </resources>

@@ -66,12 +66,30 @@ fun UserProfileScreen(
                }
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // User Information with padding
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
-                    Text(text = "${context.getString(R.string.username)}: ${user?.username}")
+                    Row {
+                        Text(
+                            text = buildAnnotatedString {
+                                append("${context.getString(R.string.username)}: ")
+                                pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+                                append("${user?.username}")
+                                pop()
+                            }
+                        )
+                    }
+                    Row {
+                        Text(
+                            text = buildAnnotatedString {
+                                append("${context.getString(R.string.email)}: ")
+                                pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
+                                append("${user?.email}")
+                                pop()
+                            }
+                        )
+                    }
                     Row {
                         Text(
                             text = buildAnnotatedString {
@@ -79,7 +97,7 @@ fun UserProfileScreen(
                                 pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
                                 append("${user?.firstName} ${user?.lastName}")
                                 pop()
-                            },
+                            }
                         )
                     }
                 }

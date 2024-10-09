@@ -148,5 +148,6 @@
     <!-- Profile -->
     <string name="profile">Profile</string>
     <string name="change_preference">Change Preference </string>
+    <string name="email">Email</string>
 
 </resources>

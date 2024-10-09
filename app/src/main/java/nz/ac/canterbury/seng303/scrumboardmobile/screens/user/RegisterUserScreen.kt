@@ -30,13 +30,15 @@ fun RegisterUserScreen(
     userViewModel: UserViewModel,
     username: String,
     onUsernameChange: (String) -> Unit,
+    email: String,
+    onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
     firstName: String,
     onFirstNameChange: (String) -> Unit,
     lastName: String,
     onLastNameChange: (String) -> Unit,
-    createUserFn: (String, String, String, String) -> Unit,
+    createUserFn: (String,String, String, String, String) -> Unit,
     grantAuthentication: suspend () -> Unit,
     editCurrentUser: suspend (Int) -> Unit,
 ) {
@@ -47,7 +49,7 @@ fun RegisterUserScreen(
     LaunchedEffect(isRegistering) {
         if (isRegistering) {
             try {
-                createUserFn(username, password, firstName, lastName)
+                createUserFn(username, email, password, firstName, lastName)
                 val user = userViewModel.getUserByName(username)
                 if (user != null) {
                     editCurrentUser(user.userId)
@@ -87,7 +89,14 @@ fun RegisterUserScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-
+            OutlinedTextField(
+                value = email,
+                onValueChange = { onEmailChange(it) },
+                label = { Text(ContextCompat.getString(context, R.string.email)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
             OutlinedTextField(
                 value = password,
                 onValueChange = { onPasswordChange(it) },
