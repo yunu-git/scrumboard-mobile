@@ -62,6 +62,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.CreateWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.LoginUserScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.EditWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.util.hashPassword
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
@@ -74,6 +75,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewM
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserLoginModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.EditWorkLogViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
@@ -160,7 +162,10 @@ class MainActivity : ComponentActivity() {
                         val editStoryViewModel: EditStoryViewModel = viewModel()
 
                         val createTaskViewModel: CreateTaskViewModel = viewModel()
+
                         val createWorkLogViewModel: CreateWorkLogViewModel = viewModel()
+                        val editWorkLogViewModel: EditWorkLogViewModel = viewModel()
+
                         val userLoginModel: UserLoginModel = viewModel()
 
                         NavHost(navController = navController, startDestination = "Home") {
@@ -369,6 +374,27 @@ class MainActivity : ComponentActivity() {
                                         createWorkLogViewModel = createWorkLogViewModel,
                                         workLogViewModel = workLogViewModel,
                                         taskId = taskId.toInt()
+                                    )
+                                }
+                            }
+
+                            composable(
+                                "Story/{storyId}/Task/{taskId}/WorkLog/{workLogId}/edit",
+                                arguments = listOf(
+                                    navArgument("storyId") { type = NavType.StringType },
+                                    navArgument("taskId") { type = NavType.StringType },
+                                    navArgument("workLogId") { type = NavType.StringType }
+                                )
+                            ) { backStackEntry ->
+                                val workLogId = backStackEntry.arguments?.getString("workLogId")
+                                val currentUserIdState by currentUserId.collectAsState(initial = -1)
+
+                                if (workLogId != null) {
+                                    EditWorkLogScreen(
+                                        workLogId = workLogId,
+                                        navController = navController,
+                                        editWorkLogViewModel = editWorkLogViewModel,
+                                        workLogViewModel = workLogViewModel,
                                     )
                                 }
                             }

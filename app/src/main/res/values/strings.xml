@@ -11,6 +11,8 @@
     <string name="create_task.label">Create Task</string>
     <string name="create_a_task.label">Create a Task</string>
     <string name="create_work_log.label">Add Work Log</string>
+    <string name="edit_work_log.label">Edit Work Log</string>
+
     <string name="create.label">Create</string>
     <string name="create_story.label">Create Story</string>
     <string name="ok.label">OK</string>
@@ -108,6 +110,8 @@
     <string name="assignee">Assignee</string>
     <string name="reviewer">Reviewer</string>
     <string name="task_updated">Task Updated</string>
+    <string name="work_log_added_by">Added by</string>
+    <string name="work_log_added_by_loading">Loading…</string>
 
     <!-- Create Work Log -->
     <string name="date">Date</string>
