@@ -41,15 +41,13 @@ fun RegisterUserScreen(
     onUserEmailChange: (String) -> Unit,
     username: String,
     onUsernameChange: (String) -> Unit,
-    email: String,
-    onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
     firstName: String,
     onFirstNameChange: (String) -> Unit,
     lastName: String,
     onLastNameChange: (String) -> Unit,
-    createUserFn: (String,String, String, String, String) -> Unit,
+    createUserFn: (String, String, String, String, String) -> Unit,
     grantAuthentication: suspend () -> Unit,
     editCurrentUser: suspend (Int) -> Unit,
 ) {
@@ -94,29 +92,27 @@ fun RegisterUserScreen(
                     if (username == user.username) {
                         errorMessage += "Username is already taken. "
                     }
-                    if (userEmail == user.email) {
+                    if (userEmail == user.userEmail) {
                         errorMessage += "Email is already in use. "
                     }
                 }
 
                 if (errorMessage.isEmpty()) {
                     coroutineScope {
-                        createUserFn(username, email,  password, firstName, lastName)
+                        createUserFn(username, password, firstName, lastName, userEmail)
+                        val user = userViewModel.getUserByName(username)
+                        if (user != null) {
+                            editCurrentUser(user.userId)
+                        }
                     }
+                    grantAuthentication()
+                    onUserEmailChange("")
+                    onUsernameChange("")
+                    onPasswordChange("")
+                    onFirstNameChange("")
+                    onLastNameChange("")
+                    navController.navigate("AllStories")
 
-                    val user = userViewModel.getUserByName(username)
-                    if (user != null) {
-                        editCurrentUser(user.userId)
-                        grantAuthentication()
-                        onUserEmailChange("")
-                        onUsernameChange("")
-                        onPasswordChange("")
-                        onFirstNameChange("")
-                        onLastNameChange("")
-                        navController.popBackStack()
-                    } else {
-                        registrationError = "Failed to retrieve user after registration"
-                    }
                 } else {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
@@ -140,6 +136,15 @@ fun RegisterUserScreen(
                 .fillMaxWidth()
         ) {
             OutlinedTextField(
+                value = userEmail,
+                onValueChange = { onUserEmailChange(it) },
+                label = { Text(ContextCompat.getString(context, R.string.useremail)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
+
+            OutlinedTextField(
                 value = username,
                 onValueChange = { onUsernameChange(it) },
                 label = { Text(ContextCompat.getString(context, R.string.username)) },
@@ -147,14 +152,7 @@ fun RegisterUserScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             )
-            OutlinedTextField(
-                value = email,
-                onValueChange = { onEmailChange(it) },
-                label = { Text(ContextCompat.getString(context, R.string.email)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
+
             OutlinedTextField(
                 value = password,
                 onValueChange = { onPasswordChange(it) },
