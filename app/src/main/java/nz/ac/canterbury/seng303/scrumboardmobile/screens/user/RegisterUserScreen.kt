@@ -100,21 +100,19 @@ fun RegisterUserScreen(
                 if (errorMessage.isEmpty()) {
                     coroutineScope {
                         createUserFn(username, password, firstName, lastName, userEmail)
+                        val user = userViewModel.getUserByName(username)
+                        if (user != null) {
+                            editCurrentUser(user.userId)
+                        }
                     }
+                    grantAuthentication()
+                    onUserEmailChange("")
+                    onUsernameChange("")
+                    onPasswordChange("")
+                    onFirstNameChange("")
+                    onLastNameChange("")
+                    navController.navigate("AllStories")
 
-                    val user = userViewModel.getUserByName(username)
-                    if (user != null) {
-                        editCurrentUser(user.userId)
-                        grantAuthentication()
-                        onUserEmailChange("")
-                        onUsernameChange("")
-                        onPasswordChange("")
-                        onFirstNameChange("")
-                        onLastNameChange("")
-                        navController.popBackStack()
-                    } else {
-                        registrationError = "Failed to retrieve user after registration"
-                    }
                 } else {
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                 }
