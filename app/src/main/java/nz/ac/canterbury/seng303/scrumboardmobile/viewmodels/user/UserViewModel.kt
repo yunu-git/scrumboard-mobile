@@ -44,6 +44,15 @@ class UserViewModel(
         }
     }
 
+    fun updateUser(user: User)= viewModelScope.launch {
+        try {
+            userDao.updateUser(user)
+            Log.d("USER_VIEW_MODEL", "User status updated successfully")
+        } catch (e: Exception) {
+            Log.e("USER_VIEW_MODEL", "Error updating user status", e)
+        }
+    }
+
     suspend fun authenticateUser(username: String, password: String): Boolean {
         val user: User? = userDao.findByUsername(username)
         val isAuthenticated = !(user == null || user.password != hashPassword(password))

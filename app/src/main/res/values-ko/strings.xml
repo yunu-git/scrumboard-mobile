@@ -141,4 +141,11 @@
     <string name="change_preference">선호도 변경</string>
     <string name="email">이메일</string>
 
+    <!-- Edit User-->
+    <string name="title_empty">사용자 이름을 비워둘 수 없습니다.</string>
+    <string name="email_empty">이메일을 비워둘 수 없습니다.</string>
+    <string name="old_password">기존 비밀번호</string>
+    <string name="new_password">새 비밀번호</string>
+
+
 </resources>

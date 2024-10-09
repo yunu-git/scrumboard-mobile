@@ -110,7 +110,7 @@ fun UserProfileScreen(
         ) {
             Button(
                 onClick = {
-                    navController.navigate("Home")
+                    navController.navigate("EditUser")
                 },
                 modifier = Modifier.padding(vertical = 8.dp) // Add vertical padding
             ) {
@@ -118,7 +118,7 @@ fun UserProfileScreen(
             }
             Button(
                 onClick = {
-                    navController.navigate("preferences")
+                    navController.navigate("Preference")
                 },
                 modifier = Modifier.padding(vertical = 8.dp) // Add vertical padding
             ) {

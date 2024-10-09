@@ -55,6 +55,7 @@ fun RegisterUserScreen(
                     editCurrentUser(user.userId)
                     grantAuthentication()
                     onUsernameChange("")
+                    onEmailChange("")
                     onPasswordChange("")
                     onFirstNameChange("")
                     onLastNameChange("")

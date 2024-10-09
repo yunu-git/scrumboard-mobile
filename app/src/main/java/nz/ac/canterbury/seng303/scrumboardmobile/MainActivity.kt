@@ -65,6 +65,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.screens.story.ViewStoryScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.CreateTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.EditTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.EditUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.LoginUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserProfileScreen
@@ -81,6 +82,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.EditTaskViewMod
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.TaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.task.ViewTaskViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.CreateUserViewModel
+import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserEditViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserLoginModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
@@ -182,6 +184,7 @@ class MainActivity : ComponentActivity() {
                         val editWorkLogViewModel: EditWorkLogViewModel = viewModel()
 
                         val userLoginModel: UserLoginModel = viewModel()
+                        val userEditViewModel: UserEditViewModel = viewModel()
 
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
@@ -443,6 +446,15 @@ class MainActivity : ComponentActivity() {
                                 val currentUserIdState by currentUserId.collectAsState(initial = -1)
                                 UserProfileScreen(navController = navController,
                                     userViewModel = userViewModel,
+                                    currentUserId = currentUserIdState
+                                )
+                            }
+                            composable("EditUser") {
+                                val currentUserIdState by currentUserId.collectAsState(initial = -1)
+                                EditUserScreen(
+                                    navController = navController,
+                                    userViewModel = userViewModel,
+                                    userEditViewModel = userEditViewModel,
                                     currentUserId = currentUserIdState
                                 )
                             }
