@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng303.scrumboardmobile.screens.story
 
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -54,8 +57,14 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 @Composable
 fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
+
     storyViewModel.getStories()
     val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
+    BackHandler {
+        //Disable the swipe right to go back gesture
+    }
+
     if (storiesWithTasks.isNotEmpty()) {
         Scaffold(
             floatingActionButton = {
@@ -86,6 +95,7 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
             contentAlignment = Alignment.Center
         ) {
             Column(
+                modifier = Modifier.verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

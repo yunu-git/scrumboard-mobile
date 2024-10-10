@@ -26,7 +26,9 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -61,6 +63,8 @@ fun ViewStoryScreen(
     val selectedStoryState by storyViewModel.selectedStoryWithTasks.collectAsState(null)
     val storyWithTasks: StoryWithTasks? = selectedStoryState
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
+
 
     if (storyWithTasks != null) {
         Scaffold(
@@ -75,6 +79,7 @@ fun ViewStoryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .verticalScroll(scrollState)
             ) {
                 Box(
                     modifier = Modifier

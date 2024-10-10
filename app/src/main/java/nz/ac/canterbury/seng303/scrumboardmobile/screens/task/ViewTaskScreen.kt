@@ -62,7 +62,6 @@ fun ViewTaskScreen(
     storyId: String,
     taskId: String
 ) {
-
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val context = LocalContext.current

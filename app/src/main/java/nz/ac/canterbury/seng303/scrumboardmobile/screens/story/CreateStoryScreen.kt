@@ -7,6 +7,8 @@ import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -39,6 +41,8 @@ fun CreateStoryScreen(
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     val timeCreated = remember { mutableLongStateOf(0L) }
+    val scrollState = rememberScrollState()
+
 
     val context = LocalContext.current
     Column(
@@ -79,6 +83,7 @@ fun CreateStoryScreen(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
+                .verticalScroll(scrollState)
         ) {
             OutlinedTextField(
                 value = title,
