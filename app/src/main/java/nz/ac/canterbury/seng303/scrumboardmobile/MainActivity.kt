@@ -192,9 +192,7 @@ class MainActivity : ComponentActivity() {
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(navController = navController,
-                                    isAuth = isAuth,
-                                    removeAuthenticationFn = { removeAuthentication()},
-                                    editCurrentUser = {userId -> editCurrentUser(userId)}
+                                    isAuth = isAuth
                             ) }
                             composable("Register") {
                                 RegisterUserScreen(
@@ -449,7 +447,9 @@ class MainActivity : ComponentActivity() {
                                 val currentUserIdState by currentUserId.collectAsState(initial = -1)
                                 UserProfileScreen(navController = navController,
                                     userViewModel = userViewModel,
-                                    currentUserId = currentUserIdState
+                                    currentUserId = currentUserIdState,
+                                    removeAuthenticationFn = { removeAuthentication()},
+                                    editCurrentUser = {userId -> editCurrentUser(userId)}
                                 )
                             }
                             composable("EditUser") {
@@ -473,9 +473,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Home(navController: NavController,
-         isAuth: Flow<Boolean>,
-         removeAuthenticationFn: suspend () -> Unit,
-         editCurrentUser: suspend(Int) -> Unit
+         isAuth: Flow<Boolean>
          ) {
     val isAuthenticated by isAuth.collectAsState(initial = false)
     val context = LocalContext.current
@@ -495,20 +493,7 @@ fun Home(navController: NavController,
                 Text(ContextCompat.getString(context, R.string.login_label))
             }
         } else {
-            Button(onClick = { navController.navigate("AllStories") }) {
-                Text(ContextCompat.getString(context, R.string.view_stories_label))
-            }
-            Button(onClick = { navController.navigate("CreateStory") }) {
-                Text(ContextCompat.getString(context, R.string.create_story_label))
-            }
-            Button(onClick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    removeAuthenticationFn()
-                    editCurrentUser(-1)
-                }
-            }) {
-                Text(ContextCompat.getString(context, R.string.log_out_label))
-            }
+            navController.navigate("AllStories")
         }
     }
 }
