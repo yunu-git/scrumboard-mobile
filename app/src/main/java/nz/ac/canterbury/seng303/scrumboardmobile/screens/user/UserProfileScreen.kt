@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng303.scrumboardmobile.screens.user
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -38,6 +40,7 @@ fun UserProfileScreen(
     val context = LocalContext.current
     val userState by userViewModel.currentUser.collectAsState(null)
     val user: User? = userState
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(currentUserId) {
         userViewModel.setCurrentUser(currentUserId)
@@ -46,7 +49,8 @@ fun UserProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

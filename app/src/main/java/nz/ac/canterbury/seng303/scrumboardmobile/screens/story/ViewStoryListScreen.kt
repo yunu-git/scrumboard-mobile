@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -54,6 +56,8 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.StoryViewModel
 @Composable
 fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel) {
     val context = LocalContext.current
+    val scrollState = rememberScrollState()
+
     storyViewModel.getStories()
     val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
     if (storiesWithTasks.isNotEmpty()) {
@@ -86,6 +90,7 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
             contentAlignment = Alignment.Center
         ) {
             Column(
+                modifier = Modifier.verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
