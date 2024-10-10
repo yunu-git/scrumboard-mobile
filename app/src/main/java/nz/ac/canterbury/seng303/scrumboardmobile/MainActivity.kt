@@ -106,6 +106,7 @@ class MainActivity : ComponentActivity() {
     private val AUTHENTICATION = booleanPreferencesKey("authentication")
     private val CURRENT_USER = intPreferencesKey("userId")
     private val LANGUAGE_KEY = stringPreferencesKey("app_language")
+    private val DARKMODE_KEY = booleanPreferencesKey("darkMode")
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -126,6 +127,10 @@ class MainActivity : ComponentActivity() {
         val selectedLanguage: Flow<String> = dataStore.data
             .map { preferences ->
                 preferences[LANGUAGE_KEY] ?: Locale.getDefault().language
+            }
+        val isDarkMode: Flow<Boolean> = dataStore.data
+            .map { preferences ->
+                preferences[DARKMODE_KEY] ?: true
             }
 
         suspend fun editCurrentUser(userId:Int) {
@@ -152,6 +157,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        suspend fun setDarkModeState(newDarkModeState: Boolean) {
+            dataStore.edit { settings ->
+                settings[DARKMODE_KEY] = newDarkModeState
+            }
+        }
         lifecycleScope.launch {
             selectedLanguage.collect { languageCode ->
                 setLocale(this@MainActivity, languageCode)
@@ -159,7 +169,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            ScrumBoardTheme(darkTheme = true) {
+            val isDarkModeState by isDarkMode.collectAsState(initial = true)
+            ScrumBoardTheme(darkTheme = isDarkModeState) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val appBarViewModel: AppBarViewModel = viewModel()
@@ -513,9 +524,15 @@ class MainActivity : ComponentActivity() {
                                 UserPreferenceScreen(
                                     navController = navController,
                                     language = selectedLanguage,
+                                    isDarkMode = isDarkModeState,
                                     onLanguageChangeFn = { selectedLanguage ->
                                         lifecycleScope.launch {
                                             setLanguage(selectedLanguage)
+                                        }
+                                    },
+                                    onDarkModeChangeFn = { newDarkModeState ->
+                                        lifecycleScope.launch {
+                                            setDarkModeState(newDarkModeState)
                                         }
                                     }
                                 )

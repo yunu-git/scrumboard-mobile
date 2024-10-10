@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -17,26 +18,25 @@ import nz.ac.canterbury.seng303.scrumboardmobile.R
 fun UserPreferenceScreen(
     navController: NavController,
     language: Flow<String>,
-    onLanguageChangeFn: (String) -> Unit
+    isDarkMode: Boolean,
+    onLanguageChangeFn: (String) -> Unit,
+    onDarkModeChangeFn: (Boolean) -> Unit
 ) {
-    // Collect the current language
     val currentLanguage by language.collectAsState(initial = "")
-
-    // States for dropdown menus
     var expandedLanguage by remember { mutableStateOf(false) }
 
     // List of languages
     val languages = listOf(
         "en" to "English",
-        "ja" to "Japanese",
-        "ko" to "Korean"
+        "ja" to stringResource(id = R.string.japanese),
+        "ko" to stringResource(id = R.string.korean)
     )
 
     // Column layout for the screen
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
     ) {
         Text(text = stringResource(id = R.string.select_language), style = MaterialTheme.typography.titleMedium)
 
@@ -76,6 +76,24 @@ fun UserPreferenceScreen(
                     )
                 }
             }
+        }
+
+        // Add some space before the toggle
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Dark mode toggle
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(id = R.string.toggle_dark_mode), style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.weight(1f)) // Spacer to push the switch to the end
+            Switch(
+                checked = isDarkMode,
+                onCheckedChange = {
+                    onDarkModeChangeFn(!isDarkMode)
+                }
+            )
         }
     }
 }

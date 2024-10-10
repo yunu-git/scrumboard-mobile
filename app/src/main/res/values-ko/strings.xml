@@ -160,6 +160,7 @@
     <string name="select_language">언어 선택</string>
     <string name="language">언어</string>
     <string name="dropdown_description">드롭다운</string>
+    <string name="toggle_dark_mode">다크 모드</string>
 
 
 </resources>

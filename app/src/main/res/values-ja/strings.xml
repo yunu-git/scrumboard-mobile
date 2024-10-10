@@ -159,6 +159,7 @@
     <string name="select_language">言語を選択</string>
     <string name="language">言語</string>
     <string name="dropdown_description">ドロップダウン</string>
+    <string name="toggle_dark_mode">ダークモード</string>
 
 
 </resources>
