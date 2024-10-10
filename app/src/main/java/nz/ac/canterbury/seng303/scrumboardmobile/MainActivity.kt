@@ -141,32 +141,35 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val appBarViewModel: AppBarViewModel = viewModel()
+                val isAuthenticated by isAuth.collectAsState(initial = false)
                 appBarViewModel.init()
                 Scaffold(
                     bottomBar = {
-                        Row(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(onClick = {
-                                navController.navigate("AllStories") {
-                                    popUpTo(0) { inclusive = true }
+                        if (isAuthenticated) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                IconButton(onClick = {
+                                    navController.navigate("AllStories") {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                }) {
+                                    Icon(Icons.Default.Home, contentDescription = "Home", modifier = Modifier.size(48.dp))
                                 }
-                            }) {
-                                Icon(Icons.Default.Home, contentDescription = "Home", modifier = Modifier.size(48.dp))
-                            }
-                            IconButton(onClick = {
-                                navController.navigate("CreateStory")
-                            }) {
-                                Icon(Icons.Default.Add, contentDescription = "Create Story", modifier = Modifier.size(48.dp))
-                            }
-                            IconButton(onClick = {
-                                navController.navigate("Profile")
-                            }) {
-                                Icon(Icons.Default.Person, contentDescription = "Profile", modifier = Modifier.size(48.dp))
+                                IconButton(onClick = {
+                                    navController.navigate("CreateStory")
+                                }) {
+                                    Icon(Icons.Default.Add, contentDescription = "Create Story", modifier = Modifier.size(48.dp))
+                                }
+                                IconButton(onClick = {
+                                    navController.navigate("Profile")
+                                }) {
+                                    Icon(Icons.Default.Person, contentDescription = "Profile", modifier = Modifier.size(48.dp))
+                                }
                             }
                         }
                     }
