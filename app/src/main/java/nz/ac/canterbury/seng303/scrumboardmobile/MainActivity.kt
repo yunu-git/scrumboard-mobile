@@ -211,13 +211,13 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = {
                                 navBackStackEntry?.destination?.route?.let { route ->
-                                    appBarViewModel.getNameById(route)?.run {
+                                    appBarViewModel.getNameById(route, applicationContext)?.run {
                                         Text(this)
                                     }
                                 }
                             },
                             navigationIcon = {
-                                if (navBackStackEntry?.destination?.route != "Home" && ! isAuthenticated) {
+                                if (navBackStackEntry?.destination?.route != "AllStories" && navBackStackEntry?.destination?.route != "Home") {
                                     IconButton(onClick = { navController.popBackStack() }) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowBack,
