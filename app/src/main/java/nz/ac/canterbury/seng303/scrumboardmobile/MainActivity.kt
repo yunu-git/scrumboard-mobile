@@ -181,7 +181,7 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = {
                                 navBackStackEntry?.destination?.route?.let { route ->
-                                    appBarViewModel.getNameById(route)?.run {
+                                    appBarViewModel.getNameById(route, applicationContext)?.run {
                                         Text(this)
                                     }
                                 }

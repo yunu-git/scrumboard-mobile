@@ -70,6 +70,8 @@
     <string name="password">パスワード</string>
     <string name="first_name">名</string>
     <string name="last_name">姓</string>
+    <string name="useremail">ユーザーのメール</string>
+
 
     <string name="login_failed">ログインに失敗しました。</string>
 
