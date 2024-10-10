@@ -79,6 +79,9 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
 
+    <string name="enter_name">Enter your name</string>
+    <string name="invalid_username">Invalid username</string>
+
     <string name="login_failed">Failed to log in.</string>
 
     <!-- Edit User-->
@@ -169,5 +172,9 @@
     <string name="email_empty">Email cannot be empty.</string>
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
+
+    <!-- Notification Receiver -->
+    <string name="received_notification">Received notification</string>
+
 
 </resources>
