@@ -81,6 +81,11 @@
 
     <string name="login_failed">Failed to log in.</string>
 
+    <!-- Edit User-->
+    <string name="invalidEmail">Invalid email</string>
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="no_empty_password">Incorrect password</string>
+    <string name="user_details_saved">Incorrect password</string>
 
     <!-- Create Story -->
     <string name="story_title">Story Title</string>
