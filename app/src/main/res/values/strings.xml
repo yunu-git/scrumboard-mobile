@@ -165,4 +165,9 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
 
+    <!--User Preference-->
+    <string name="select_language">Select Language</string>
+    <string name="language">Language</string>
+    <string name="dropdown_description">Dropdown</string>
+
 </resources>

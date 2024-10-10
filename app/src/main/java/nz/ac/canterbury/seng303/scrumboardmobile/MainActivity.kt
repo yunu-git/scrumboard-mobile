@@ -47,7 +47,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -56,8 +58,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -71,11 +71,13 @@ import nz.ac.canterbury.seng303.scrumboardmobile.screens.task.ViewTaskScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.EditUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.LoginUserScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.RegisterUserScreen
+import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserPreferenceScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.user.UserProfileScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.CreateWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.screens.workLog.EditWorkLogScreen
 import nz.ac.canterbury.seng303.scrumboardmobile.ui.theme.ScrumBoardTheme
 import nz.ac.canterbury.seng303.scrumboardmobile.util.hashPassword
+import nz.ac.canterbury.seng303.scrumboardmobile.util.setLocale
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.common.AppBarViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.CreateStoryViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.story.EditStoryViewModel
@@ -91,6 +93,7 @@ import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.user.UserViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.CreateWorkLogViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.EditWorkLogViewModel
 import nz.ac.canterbury.seng303.scrumboardmobile.viewmodels.workLog.WorkLogViewModel
+import java.util.Locale
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 
@@ -101,8 +104,8 @@ class MainActivity : ComponentActivity() {
     private val workLogViewModel: WorkLogViewModel by koinViewModel()
 
     private val AUTHENTICATION = booleanPreferencesKey("authentication")
-
     private val CURRENT_USER = intPreferencesKey("userId")
+    private val LANGUAGE_KEY = stringPreferencesKey("app_language")
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -119,6 +122,10 @@ class MainActivity : ComponentActivity() {
         val currentUserId: Flow<Int> = dataStore.data
             .map { preferences ->
                 preferences[CURRENT_USER] ?: -1
+            }
+        val selectedLanguage: Flow<String> = dataStore.data
+            .map { preferences ->
+                preferences[LANGUAGE_KEY] ?: Locale.getDefault().language
             }
 
         suspend fun editCurrentUser(userId:Int) {
@@ -139,8 +146,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        suspend fun setLanguage(language: String) {
+            dataStore.edit { settings ->
+                settings[LANGUAGE_KEY] = language
+            }
+        }
+
+        lifecycleScope.launch {
+            selectedLanguage.collect { languageCode ->
+                setLocale(this@MainActivity, languageCode)
+            }
+        }
+
         setContent {
-            ScrumBoardTheme {
+            ScrumBoardTheme(darkTheme = true) {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val appBarViewModel: AppBarViewModel = viewModel()
@@ -490,7 +509,17 @@ class MainActivity : ComponentActivity() {
                                     currentUserId = currentUserIdState
                                 )
                             }
-
+                            composable("Preference") {
+                                UserPreferenceScreen(
+                                    navController = navController,
+                                    language = selectedLanguage,
+                                    onLanguageChangeFn = { selectedLanguage ->
+                                        lifecycleScope.launch {
+                                            setLanguage(selectedLanguage)
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
