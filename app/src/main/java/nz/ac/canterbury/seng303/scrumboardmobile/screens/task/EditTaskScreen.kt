@@ -468,11 +468,11 @@ fun EditTaskScreen(
                                                     )
                                                     putExtra(
                                                         Intent.EXTRA_SUBJECT,
-                                                        ContextCompat.getString(context, R.string.assignedToForEmailTitle) + "'${taskWithWorkLogs.task.title}'"
+                                                        context.getString(R.string.assignedToForEmailTitle, taskWithWorkLogs.task.title)
                                                     )
                                                     putExtra(
                                                         Intent.EXTRA_TEXT,
-                                                        ContextCompat.getString(context, R.string.assignedToForEmailBody) + "'${taskWithWorkLogs.task.title}'"
+                                                        context.getString(R.string.assignedToForEmailBody, taskWithWorkLogs.task.title)
                                                     )
                                                 }
                                                 intents.add(intent)
@@ -492,11 +492,11 @@ fun EditTaskScreen(
                                                     )
                                                     putExtra(
                                                         Intent.EXTRA_SUBJECT,
-                                                        ContextCompat.getString(context, R.string.reviewForEmailTitle) + "'${taskWithWorkLogs.task.title}'"
+                                                        context.getString(R.string.reviewForEmailTitle, taskWithWorkLogs.task.title)
                                                     )
                                                     putExtra(
                                                         Intent.EXTRA_TEXT,
-                                                        ContextCompat.getString(context, R.string.reviewForEmailBody) + "'${taskWithWorkLogs.task.title}'"
+                                                        context.getString(R.string.reviewForEmailBody, taskWithWorkLogs.task.title)
                                                     )
                                                 }
                                                 intents.add(intent)
