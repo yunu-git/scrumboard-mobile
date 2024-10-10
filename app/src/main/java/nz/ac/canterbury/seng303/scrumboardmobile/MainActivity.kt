@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(onClick = {
-                                navController.navigate("AllStories") {
+                                navController.navigate("Home") {
                                     popUpTo(0) { inclusive = true }
                                 }
                             }) {
@@ -390,6 +390,7 @@ class MainActivity : ComponentActivity() {
                                 val storyId = backStackEntry.arguments?.getString("storyId")
 
                                 val taskId = backStackEntry.arguments?.getString("taskId")
+                                val currentUserIdState by currentUserId.collectAsState(initial = -1)
 
                                 if (storyId != null && taskId != null) {
                                     EditTaskScreen(
@@ -397,6 +398,7 @@ class MainActivity : ComponentActivity() {
                                         taskViewModel = taskViewModel,
                                         userViewModel = userViewModel,
                                         editTaskViewModel = editTaskViewModel,
+                                        currentUserId = currentUserIdState
                                     )
                                 }
                             }
