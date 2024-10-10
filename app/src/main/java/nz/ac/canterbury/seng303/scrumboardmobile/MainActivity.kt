@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -172,7 +174,31 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                    },
+                    topBar = {
+                        // Add your AppBar content here
+                        TopAppBar(
+                            title = {
+                                navBackStackEntry?.destination?.route?.let { route ->
+                                    appBarViewModel.getNameById(route)?.run {
+                                        Text(this)
+                                    }
+                                }
+                            },
+                            navigationIcon = {
+                                if (navBackStackEntry?.destination?.route != "Home" && ! isAuthenticated) {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
+                                    }
+                                }
+                            }
+                        )
+
                     }
+
                 ) {
                     Box(modifier = Modifier.padding(it)) {
                         val createUserViewModel: CreateUserViewModel = viewModel()
