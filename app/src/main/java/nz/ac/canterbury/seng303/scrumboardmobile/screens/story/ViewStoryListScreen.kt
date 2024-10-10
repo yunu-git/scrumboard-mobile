@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng303.scrumboardmobile.screens.story
 
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +61,10 @@ fun ViewAllStories(navController: NavController, storyViewModel: StoryViewModel)
 
     storyViewModel.getStories()
     val storiesWithTasks: List<StoryWithTasks> by storyViewModel.storiesWithTasks.collectAsState(emptyList())
+    BackHandler {
+        //Disable the swipe right to go back gesture
+    }
+
     if (storiesWithTasks.isNotEmpty()) {
         Scaffold(
             floatingActionButton = {

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -504,6 +505,9 @@ fun Home(navController: NavController,
     val isAuthenticated by isAuth.collectAsState(initial = false)
     val context = LocalContext.current
     NotificationPermissionHandler(context = context)
+    BackHandler {
+        //Disable the swipe right to go back gesture
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
